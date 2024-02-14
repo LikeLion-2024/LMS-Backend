@@ -2,7 +2,8 @@ package kaulikeLion.Backend.global.config;
 
 import kaulikeLion.Backend.oauth.OAuth2SuccessHandler;
 import kaulikeLion.Backend.oauth.OAuth2UserServiceImpl;
-import kaulikeLion.Backend.oauth.jwt.JwtTokenFilter;
+import kaulikeLion.Backend.oauth.jwt.AuthCreationFilter;
+import kaulikeLion.Backend.oauth.jwt.JwtValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Configuration
 public class WebSecurityConfig {
-    private final JwtTokenFilter jwtTokenFilter;
+    private final AuthCreationFilter authCreationFilter;
+    private final JwtValidationFilter jwtValidationFilter;
+
     private final OAuth2UserServiceImpl oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     @Bean
@@ -44,8 +47,10 @@ public class WebSecurityConfig {
                         sessionManagement -> sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtTokenFilter, AuthorizationFilter.class);
+                .addFilterBefore(authCreationFilter, AuthorizationFilter.class)
+                .addFilterBefore(jwtValidationFilter, AuthCreationFilter.class)
 
+        ;
         return http.build();
     }
 }
