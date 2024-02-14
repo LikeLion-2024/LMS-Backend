@@ -1,15 +1,20 @@
 package kaulikeLion.Backend.oauth.service;
 
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
 import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.oauth.jwt.JwtDto;
 import kaulikeLion.Backend.oauth.jwt.JwtTokenUtils;
+import kaulikeLion.Backend.oauth.jwt.RefreshToken;
 import kaulikeLion.Backend.oauth.repository.RefreshTokenRedisRepository;
 import kaulikeLion.Backend.oauth.repository.UserRepository;
+import kaulikeLion.Backend.oauth.utils.IpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +58,6 @@ public class UserService {
         log.info("{} 회원 탈퇴 완료", username);
     }
 
-    /*
     // access, refresh 토큰 재발급
     public JwtDto reissue(HttpServletRequest request ) {
         // 1. 레디스에 해당 토큰 있는 지 확인
@@ -84,7 +88,7 @@ public class UserService {
         refreshTokenRedisRepository.save(refreshToken);
         return jwtDto;
     }
-*/
+
     public User findUserByUserName(String userName){
         return userRepository.findByUsername(userName)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));

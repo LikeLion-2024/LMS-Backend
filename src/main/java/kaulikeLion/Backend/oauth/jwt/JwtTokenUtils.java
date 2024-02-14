@@ -7,11 +7,14 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.sql.Date;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
@@ -46,8 +49,8 @@ public class JwtTokenUtils {
         //         Claims는 Claim들을 담기위한 Map의 상속 interface
         Claims accessTokenClaims = Jwts.claims()
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(accessExpirationTime)));
+                .setIssuedAt(java.sql.Date.from(Instant.now()))
+                .setExpiration(java.sql.Date.from(Instant.now().plusSeconds(accessExpirationTime)));
         String accessToken = Jwts.builder()
                 .setClaims(accessTokenClaims)
                 .claim("authorities", authorities)
@@ -55,7 +58,7 @@ public class JwtTokenUtils {
                 .compact();
 
         Claims refreshTokenClaims = Jwts.claims()
-                .setIssuedAt(Date.from(Instant.now()))
+                .setIssuedAt(java.sql.Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plusSeconds(refreshExpirationTime)));
         String refreshToken = Jwts.builder()
                 .setClaims(refreshTokenClaims)
@@ -90,5 +93,15 @@ public class JwtTokenUtils {
         return jwtParser
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    // 문자열로 저장된 authorities를 다시 Collection으로 변환 - 반영x
+    public Collection<? extends GrantedAuthority> getAuthFromClaims(Claims claims){
+
+        String authoritiesString = (String) claims.get("authorities"); // authorities 정보 가져오기
+
+        return Arrays.stream(authoritiesString.split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 }
