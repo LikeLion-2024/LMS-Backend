@@ -21,6 +21,9 @@ public enum ErrorCode implements BaseCode {
     TOKEN_NO_AUTH(HttpStatus.FORBIDDEN, "JWT_4031", "권한 정보가 없는 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT_4011", "토큰 유효기간이 만료되었습니다."),
 
+    // Assignment
+    ASSIGNMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ASSIGN_4041", "존재하지 않는 과제입니다."),
+
     ;
 
     private final HttpStatus httpStatus;
