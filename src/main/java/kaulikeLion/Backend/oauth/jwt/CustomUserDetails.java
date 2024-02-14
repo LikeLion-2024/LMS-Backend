@@ -23,6 +23,8 @@ public class CustomUserDetails implements UserDetails {
     private String password;
     @Getter
     private String email;
+    private String groupName;
+    private String nickname;
     @Getter
     private String provider;
     @Getter
