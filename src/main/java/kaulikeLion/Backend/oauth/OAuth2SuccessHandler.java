@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -51,17 +52,19 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 = (OAuth2User) authentication.getPrincipal();
         // 소셜 로그인을 한 새로운 사용자를 우리의 UserEntity로 전환
         String email = oAuth2User.getAttribute("email");
+        String nickname = oAuth2User.getAttribute("nickname");
         String provider = oAuth2User.getAttribute("provider");
         String username
                 = String.format("{%s}%s", provider, email.split("@")[0]);
         String providerId = oAuth2User.getAttribute("id").toString();
 
         // 처음으로 소셜 로그인한 사용자를 데이터베이스에 등록
-        if(!userDetailsManager.userExists(username)) { //1. 최초 로그인인지 확인
+        if (!userDetailsManager.userExists(username)) { //1. 최초 로그인인지 확인
             userDetailsManager.createUser(CustomUserDetails.builder()
                     .username(username)
                     .password(providerId)
                     .email(email)
+                    .nickname(nickname)
                     .provider(provider)
                     .providerId(providerId)
                     .build());
@@ -79,6 +82,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Long validPeriod
                 = refreshTokenClaims.getExpiration().toInstant().getEpochSecond()
                 - refreshTokenClaims.getIssuedAt().toInstant().getEpochSecond();
+
+        // 사용자의 리프레시 토큰을 업데이트
+        Optional<RefreshToken> existingToken = refreshTokenRedisRepository.findById(username);
+        if (existingToken.isPresent()) {
+            refreshTokenRedisRepository.deleteById(username);
+        }
+
         refreshTokenRedisRepository.save(
                 RefreshToken.builder()
                         .id(username)
@@ -90,10 +100,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 목적지 URL 설정 - 토큰 던짐
         String targetUrl = String.format(
-                "http://localhost:8080/token?access-token=%s", jwt.getAccessToken()
+//                "http://domain/oauth/callback?access-token=%s&refresh-token=%s", jwt.getAccessToken(), jwt.getRefreshToken()
+                "http://localhost:8080/token?access-token=%s&refresh-token=%s", jwt.getAccessToken(), jwt.getRefreshToken()
         );
         // 실제 Redirect 응답 생성
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
-
     }
 }
