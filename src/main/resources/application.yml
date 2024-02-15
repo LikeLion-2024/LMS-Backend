@@ -32,15 +32,32 @@ spring:
             scope:
               - email
 
+# 리프레시 토큰
 #  data:
 #    redis:
 #      host: ${REDIS_HOST}
 #      port: ${REDIS_PORT}
 
+# 로그인 JWT 토큰
 jwt:
   secret: ${JWT_SECRET}
   accessExpirationTime: ${JWT_EXPIRATION}
   refreshExpirationTime: ${JWT_REFRESH_EXPIRATION}
+
+# S3
+cloud:
+  aws:
+    s3:
+      bucket: ${aws.s3.bucket}
+      path:
+        location: location
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${aws.s3.access.key}
+      secretKey: ${aws.s3.secret.key}
 
 springdoc:
   swagger-ui:
