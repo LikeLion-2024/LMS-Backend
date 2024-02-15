@@ -20,7 +20,7 @@ public enum SuccessCode implements BaseCode {
 
     // FILE
     FILE_UPLOAD_SUCCESS(HttpStatus.OK, "FILE_200", "파일 업로드 완료되었습니다."),
-
+    FILE_DELETE_SUCCESS(HttpStatus.OK, "FILE_201", "파일 삭제 완료되었습니다."),
     ;
 
     private final HttpStatus httpStatus;
