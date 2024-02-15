@@ -24,6 +24,9 @@ public enum ErrorCode implements BaseCode {
     // Assignment
     ASSIGNMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ASSIGN_4041", "존재하지 않는 과제입니다."),
 
+    // File
+    INVALID_FILE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "FILE_4001", "파일에 확장자명이 없습니다."),
+
     ;
 
     private final HttpStatus httpStatus;
