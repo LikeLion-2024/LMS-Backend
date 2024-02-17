@@ -1,6 +1,5 @@
 package kaulikeLion.Backend.assignment.domain;
 
-import kaulikeLion.Backend.assignment.dto.AssignmentDto;
 import kaulikeLion.Backend.global.entity.BaseEntity;
 import kaulikeLion.Backend.oauth.domain.User;
 import jakarta.persistence.*;
@@ -13,6 +12,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "assignment_table")
 public class Assignment extends BaseEntity { // 과제. 게시판 같은 느낌
     @Id
@@ -32,10 +34,10 @@ public class Assignment extends BaseEntity { // 과제. 게시판 같은 느낌
     private String assignmentContents;
 
     @Column
-    private int assignmentHits;
+    private Long assignmentHits;
 
-//    @Column
-//    private LocalDateTime dueDateTime;
+    @Column
+    private LocalDateTime dueDateTime;
 
     @Column
     private int photoAttached; // 1 or 0
@@ -44,42 +46,11 @@ public class Assignment extends BaseEntity { // 과제. 게시판 같은 느낌
     @JoinColumn(name = "user_id")
     private User user; // 과제를 연 사람
 
-    @OneToMany(mappedBy = "assignment", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY) // 과제 삭제시 파일도 사라짐
-    private List<AssignmentPhoto> assignmentPhotoList = new ArrayList<>(); // file 여러개 -> list형태로 가져옴
-
-    @OneToMany(mappedBy = "assignment", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY) // 과제 삭제시 제출한 과제들도 사라짐
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    // 과제 삭제시 제출한 과제들도 사라짐
     private List<Submission> submissionList = new ArrayList<>();
 
-    public static Assignment toSaveEntity(AssignmentDto assignmentDto) {
-        Assignment assignment = new Assignment();
-        assignment.setAssignmentWriter(assignmentDto.getAssignmentWriter());
-        assignment.setAssignmentPass(assignmentDto.getAssignmentPass());
-        assignment.setAssignmentTitle(assignmentDto.getAssignmentTitle());
-        assignment.setAssignmentContents(assignmentDto.getAssignmentContents());
-        assignment.setAssignmentHits(0);
-        assignment.setPhotoAttached(0); // 파일 없음
-        return assignment;
-    }
-
-    public static Assignment toSavePhotoEntity(AssignmentDto assignmentDto) {
-        Assignment assignment = new Assignment();
-        assignment.setAssignmentWriter(assignmentDto.getAssignmentWriter());
-        assignment.setAssignmentPass(assignmentDto.getAssignmentPass());
-        assignment.setAssignmentTitle(assignmentDto.getAssignmentTitle());
-        assignment.setAssignmentContents(assignmentDto.getAssignmentContents());
-        assignment.setAssignmentHits(0);
-        assignment.setPhotoAttached(1); // 파일 있음
-        return assignment;
-    }
-
-    public static Assignment toUpdateEntity(AssignmentDto assignmentDto) {
-        Assignment assignment = new Assignment();
-        assignment.setId(assignmentDto.getId());
-        assignment.setAssignmentWriter(assignmentDto.getAssignmentWriter());
-        assignment.setAssignmentPass(assignmentDto.getAssignmentPass());
-        assignment.setAssignmentTitle(assignmentDto.getAssignmentTitle());
-        assignment.setAssignmentContents(assignmentDto.getAssignmentContents());
-        assignment.setAssignmentHits(assignmentDto.getAssignmentHits()); // 조회수 가져오기
-        return assignment;
+    public void updateHits(Long assignmentHits) {
+        this.assignmentHits = assignmentHits;
     }
 }
