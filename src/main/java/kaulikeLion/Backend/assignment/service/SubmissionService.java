@@ -1,16 +1,18 @@
 package kaulikeLion.Backend.assignment.service;
 
+import jakarta.transaction.Transactional;
+import kaulikeLion.Backend.assignment.converter.SubmissionConverter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
 import kaulikeLion.Backend.assignment.domain.Submission;
-import kaulikeLion.Backend.assignment.dto.SubmissionDto;
+import kaulikeLion.Backend.assignment.dto.SubmissionRequestDto.SubmissionDto;
 import kaulikeLion.Backend.assignment.repository.AssignmentRepository;
 import kaulikeLion.Backend.assignment.repository.SubmissionRepository;
+import kaulikeLion.Backend.global.api_payload.ErrorCode;
+import kaulikeLion.Backend.global.exception.GeneralException;
+import kaulikeLion.Backend.oauth.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,28 +20,29 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final AssignmentRepository assignmentRepository;
 
-    public Long save(SubmissionDto submissionDto) {
-        // 부모엔티티(Board) 조회
-        Optional<Assignment> optionalAssignment = assignmentRepository.findById(submissionDto.getAssignmentId());
-        if (optionalAssignment.isPresent()){
-            Assignment assignment = optionalAssignment.get();
-            Submission submission = Submission.toSaveEntity(submissionDto, assignment);
-            return submissionRepository.save(submission).getId();
-        } else {
-            return null;
-        }
+    @Transactional
+    public Submission createSubmission(SubmissionDto submissionReqDto, User user) {
+        Assignment assignment = assignmentRepository.findById(submissionReqDto.getAssignmentId())
+                .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        Submission submission = SubmissionConverter.toSubmission(submissionReqDto, assignment);
+
+        return submissionRepository.save(submission);
     }
 
-    public List<SubmissionDto> findAll(Long boardId) {
-        // select * from comment_table where board_id =? order by id desc; // 최근 작성한 댓글이 먼저 보이도록
-        Assignment assignment = assignmentRepository.findById(boardId).get();
-        List<Submission> submissionList = submissionRepository.findAllByAssignmentOrderByIdDesc(assignment);
-        // EntityList -> DtoList
-        List<SubmissionDto> submissionDtoList = new ArrayList<>();
-        for (Submission submission: submissionList){
-            SubmissionDto submissionDto = SubmissionDto.toSubmissionDto(submission, boardId);
-            submissionDtoList.add(submissionDto);
-        }
-        return submissionDtoList;
+    @Transactional
+    public Long deleteSubmission(Long id){
+        Submission submission = submissionRepository.findById(id)
+                .orElseThrow(() -> GeneralException.of(ErrorCode.SUBMISSION_NOT_FOUND));
+
+        Long assignmentId = submission.getAssignment().getId();
+        submissionRepository.delete(submission);
+        return assignmentId;
     }
+
+    public List<Submission> findAllByAssignmentId(Long id){
+        Assignment assignment = assignmentRepository.findById(id)
+                .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        return submissionRepository.findAllByAssignmentOrderByIdDesc(assignment);
+    }
+
 }
