@@ -22,7 +22,11 @@ public enum ErrorCode implements BaseCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT_4011", "토큰 유효기간이 만료되었습니다."),
 
     // Assignment
-    ASSIGNMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ASSIGN_4041", "존재하지 않는 과제입니다."),
+    ASSIGNMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ASSIGNMENT_4041", "존재하지 않는 과제입니다."),
+    ASSIGNMENT_DELETE_ERROR(HttpStatus.FORBIDDEN, "ASSIGNMENT_4042", "댓글이 있어 과제를 삭제할 수 없습니다."),
+
+    // Submission
+    SUBMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "SUBMISSION_4041", "존재하지 않는 글입니다."),
 
     // File
     INVALID_FILE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "FILE_4001", "파일에 확장자명이 없습니다."),
