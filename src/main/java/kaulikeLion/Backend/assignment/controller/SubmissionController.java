@@ -1,37 +1,55 @@
 package kaulikeLion.Backend.assignment.controller;
 
-import kaulikeLion.Backend.assignment.dto.SubmissionDto;
+import kaulikeLion.Backend.assignment.domain.Submission;
+import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto.SubmissionListResDto;
+import kaulikeLion.Backend.assignment.dto.SubmissionRequestDto.SubmissionDto;
+import kaulikeLion.Backend.assignment.converter.SubmissionConverter;
+import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto;
+import kaulikeLion.Backend.assignment.service.AssignmentService;
 import kaulikeLion.Backend.assignment.service.SubmissionService;
+import kaulikeLion.Backend.global.api_payload.ApiResponse;
+import kaulikeLion.Backend.global.api_payload.SuccessCode;
+import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.oauth.service.UserService;
+import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/submission")
 public class SubmissionController {
 
     private final SubmissionService submissionService;
+    private final AssignmentService assignmentService;
+    private final UserService userService;
 
-    // 과제 제출하기 - 제목, 내용, 파일
-    @PostMapping("/save")
-    public ResponseEntity save(@ModelAttribute SubmissionDto submissionDto){
-        System.out.println("submissionDto = " + submissionDto);
-        Long saveResult = submissionService.save(submissionDto);
-        if (saveResult != null){
-            // 작성 성공하면 댓글 목록을 가져와서 리턴
-            // 댓글 목록: 해당 게시글의 댓글 전체
-            List<SubmissionDto> submissionDtoList = submissionService.findAll(submissionDto.getAssignmentId()); // 게시글 id가 기준이됨
-            return new ResponseEntity<>(submissionDtoList, HttpStatus.OK);
-        } else{
-            return new ResponseEntity<>("해당 과제가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        }
+    // 글 만들기
+    @PostMapping("/create")
+    public ApiResponse<SubmissionListResDto> create(
+            @RequestBody SubmissionDto submissionDto,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        User user = userService.findUserByUserName(customUserDetails.getUsername());
+        Submission submission = submissionService.createSubmission(submissionDto, user);
+        List<Submission> submissions = submissionService.findAllByAssignmentId(submission.getAssignment().getId());
+
+        return ApiResponse.onSuccess(SuccessCode.SUBMISSION_CREATED,SubmissionConverter.submissionListResDto(submissions));
     }
+
+    // 글 삭제
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse<SubmissionListResDto> delete(
+            @PathVariable(name = "id") Long id,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        Long assignmentId = submissionService.deleteSubmission(id);
+        List<Submission> submissions = submissionService.findAllByAssignmentId(assignmentId);
+
+        return ApiResponse.onSuccess(SuccessCode.SUBMISSION_DELETED,SubmissionConverter.submissionListResDto(submissions));
+    }
+
 }
