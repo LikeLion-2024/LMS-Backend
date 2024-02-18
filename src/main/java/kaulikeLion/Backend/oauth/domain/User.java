@@ -7,6 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "user")
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +19,8 @@ public class User{
     private String password;
     private String email;
 
-    private String groupName;
-    private String nickname;
+    private String groupName; // 속한 그룹 이름
+    private String nickname; // 닉네임
 
     // Naver, Kakao 등 소셜 로그인 제공자 문자값
     private String provider;

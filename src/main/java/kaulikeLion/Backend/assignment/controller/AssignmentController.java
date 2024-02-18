@@ -1,5 +1,8 @@
 package kaulikeLion.Backend.assignment.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kaulikeLion.Backend.assignment.converter.AssignmentConverter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
 import kaulikeLion.Backend.assignment.domain.Submission;
@@ -19,7 +22,7 @@ import java.util.List;
 import static kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
 import static kaulikeLion.Backend.assignment.dto.AssignmentResponseDto.*;
 
-
+@Tag(name = "과제", description = "과제 관련 api 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/assignment")
@@ -30,6 +33,10 @@ public class AssignmentController {
     private final SubmissionService submissionService;
 
     // 과제 만들기
+    @Operation(summary = "과제 만들기 메서드", description = "과제를 만드는 메서드입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2011", description = "과제 생성이 완료되었습니다.")
+    })
     @PostMapping("/create")
     public ApiResponse<SimpleAssignmentDto> create(
             @RequestBody AssignmentReqDto assignmentReqDto,
@@ -42,6 +49,10 @@ public class AssignmentController {
     }
 
     // 과제 목록 조회 - 누구나 접근 가능
+    @Operation(summary = "과제 목록 정보 조회 메서드", description = "과제 목록을 조회하는 메서드입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2001", description = "과제 목록 조회가 완료되었습니다.")
+    })
     @GetMapping("/list")
     public ApiResponse<AssignmentListResDto> list(
             @RequestParam(name = "page") Integer page
@@ -53,6 +64,10 @@ public class AssignmentController {
     }
 
     // 과제 상세 조회
+    @Operation(summary = "과제 상세 조회 메서드", description = "과제 상세 정보를 조회하는 메서드입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2002", description = "과제 상세 조회가 완료되었습니다.")
+    })
     @GetMapping("/{id}")
     public ApiResponse<DetailAssignmentDto> detail(
             @PathVariable(name = "id") Long id,
@@ -70,6 +85,10 @@ public class AssignmentController {
     }
 
     // 과제 수정
+    @Operation(summary = "과제 수정 메서드", description = "과제 정보를 수정하는 메서드입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2003", description = "글 수정이 완료되었습니다.")
+    })
     @PostMapping("/update/{id}")
     public ApiResponse<DetailAssignmentDto> update(
             @PathVariable(name = "id") Long id,
@@ -83,6 +102,10 @@ public class AssignmentController {
     }
 
     // 과제 삭제
+    @Operation(summary = "과제 삭제 메서드", description = "과제를 삭제하는 메서드입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2004", description = "과제 삭제가 완료되었습니다.")
+    })
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Integer> delete(
             @PathVariable(name = "id") Long id,

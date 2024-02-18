@@ -3,7 +3,6 @@ package kaulikeLion.Backend.assignment.converter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
 import kaulikeLion.Backend.assignment.domain.Submission;
 import kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
-import kaulikeLion.Backend.assignment.dto.SubmissionRequestDto.*;
 import kaulikeLion.Backend.assignment.dto.AssignmentResponseDto.*;
 import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto.*;
 import lombok.NoArgsConstructor;

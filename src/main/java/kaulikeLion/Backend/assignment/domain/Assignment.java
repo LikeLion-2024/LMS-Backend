@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "assignment_table")
+@Table(name = "assignment")
 public class Assignment extends BaseEntity { // 과제. 게시판 같은 느낌
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

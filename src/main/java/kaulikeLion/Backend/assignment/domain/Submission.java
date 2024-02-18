@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "submission_table")
+@Table(name = "submission")
 public class Submission extends BaseEntity { // 과제 제출
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

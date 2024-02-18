@@ -19,7 +19,7 @@ public class SubmissionResponseDto {
         @Schema(description = "글 id")
         private Long id;
 
-        @Schema(description = "글 작성자 이름")
+        @Schema(description = "글 작성자")
         private String submissionWriter;
 
         @Schema(description = "글 내용")
@@ -30,6 +30,7 @@ public class SubmissionResponseDto {
 
     }
 
+    @Schema(description = "SubmissionListResDto")
     @Getter
     @Builder
     @AllArgsConstructor
