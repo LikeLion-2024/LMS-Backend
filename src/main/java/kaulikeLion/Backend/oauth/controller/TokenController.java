@@ -11,9 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+@Tag(name = "토큰", description = "access token 관련 api 입니다.")
 @RestController
 public class TokenController {
 
+    @Operation(summary = "토큰 반환", description = "로컬에서 로그인했을때 토큰 반환받는 메서드입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "Success"),
+    })
     @GetMapping("/token")
     public ResponseEntity<Map<String, String>> tokenPagge(
             @RequestParam(name = "access-token") String accessToken,
