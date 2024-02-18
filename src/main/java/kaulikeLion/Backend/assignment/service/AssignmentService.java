@@ -46,7 +46,7 @@ public class AssignmentService {
 
         // 업데이트할 내용 설정
         assignment.setAssignmentWriter(detailAssignmentReqDto.getAssignmentWriter());
-        assignment.setAssignmentPass(detailAssignmentReqDto.getAssignmentPass());
+        //assignment.setAssignmentPass(detailAssignmentReqDto.getAssignmentPass());
         assignment.setAssignmentTitle(detailAssignmentReqDto.getAssignmentTitle());
         assignment.setAssignmentContents(detailAssignmentReqDto.getAssignmentContents());
         assignment.setDueDateTime(detailAssignmentReqDto.getDueDateTime());
