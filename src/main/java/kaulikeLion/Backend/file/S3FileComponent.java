@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.s3;
+package kaulikeLion.Backend.file;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;

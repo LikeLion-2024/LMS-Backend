@@ -1,6 +1,5 @@
-package kaulikeLion.Backend.s3;
+package kaulikeLion.Backend.file;
 
-import kaulikeLion.Backend.s3.S3FileComponent;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
