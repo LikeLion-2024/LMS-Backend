@@ -16,7 +16,6 @@ public enum SuccessCode implements BaseCode {
     USER_LOGOUT_SUCCESS(HttpStatus.OK, "USER_2001", "로그아웃 되었습니다."),
     USER_REISSUE_SUCCESS(HttpStatus.OK, "USER_2002", "토큰 재발급이 완료되었습니다."),
     USER_DELETE_SUCCESS(HttpStatus.OK, "USER_2003", "회원탈퇴가 완료되었습니다."),
-
     //USER_PASSWORD_CHANGE_SUCCESS(HttpStatus.OK, "USER_2005", "비밀번호가 변경되었습니다."),
 
     // Assignment
@@ -31,8 +30,11 @@ public enum SuccessCode implements BaseCode {
     SUBMISSION_DELETED(HttpStatus.OK, "SUBMISSION_2001", "글 삭제가 완료되었습니다."),
 
     // File
-    FILE_UPLOAD_SUCCESS(HttpStatus.OK, "FILE_2001", "파일 업로드 완료되었습니다."),
-    FILE_DELETE_SUCCESS(HttpStatus.OK, "FILE_2002", "파일 삭제 완료되었습니다."),
+    FILE_UPLOAD_SUCCESS(HttpStatus.OK, "FILE_2001", "파일 업로드가 완료되었습니다."),
+    FILE_LIST_VIEW_SUCCESS(HttpStatus.OK, "FILE_2002", "파일 리스트 조회가 완료되었습니다."),
+    FILE_DELETE_SUCCESS(HttpStatus.OK, "FILE_2003", "파일 삭제가 완료되었습니다."),
+    //FILE_DOWNLOAD_SUCCESS(HttpStatus.OK, "FILE_2004", "파일 다운로드가 완료되었습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

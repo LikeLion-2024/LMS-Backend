@@ -28,7 +28,6 @@ public class SubmissionController {
     private final SubmissionService submissionService;
     private final UserService userService;
 
-    // 글 만들기
     @Operation(summary = "글 작성 메서드", description = "글을 작성하는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "SUBMISSION_2011", description = "글 생성이 완료되었습니다.")
@@ -45,7 +44,6 @@ public class SubmissionController {
         return ApiResponse.onSuccess(SuccessCode.SUBMISSION_CREATED,SubmissionConverter.submissionListResDto(submissions));
     }
 
-    // 글 삭제
     @Operation(summary = "글 삭제 메서드", description = "글을 삭제하는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "SUBMISSION_2001", description = "글 삭제가 완료되었습니다.")
@@ -60,5 +58,4 @@ public class SubmissionController {
 
         return ApiResponse.onSuccess(SuccessCode.SUBMISSION_DELETED,SubmissionConverter.submissionListResDto(submissions));
     }
-
 }

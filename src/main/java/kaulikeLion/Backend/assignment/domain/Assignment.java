@@ -16,21 +16,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "assignment")
-public class Assignment extends BaseEntity { // 과제. 게시판 같은 느낌
+public class Assignment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false) // 크기는 20, not null
+    @Column(length = 20, nullable = false)
     private String assignmentWriter;
 
-    @Column // default: 크기 255, null 가능
+    @Column
     private String assignmentPass;
 
     @Column
     private String assignmentTitle;
 
-    @Column(length = 500)
+    @Column(length = 1000)
     private String assignmentContents;
 
     @Column
@@ -40,14 +40,13 @@ public class Assignment extends BaseEntity { // 과제. 게시판 같은 느낌
     private LocalDateTime dueDateTime;
 
     @Column
-    private int photoAttached; // 1 or 0
+    private int photoAttached;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user; // 과제를 연 사람
+    private User user;
 
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    // 과제 삭제시 제출한 과제들도 사라짐
     private List<Submission> submissionList = new ArrayList<>();
 
     public void updateHits(Long assignmentHits) {
