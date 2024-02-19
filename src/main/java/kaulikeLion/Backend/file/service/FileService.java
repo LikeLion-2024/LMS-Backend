@@ -83,7 +83,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
             // removeFile(uploadFile);
 
             // db에 file 저장
-            fileRepository.save(FileConverter.toFile(uploadFileUrl, assignment, user));
+            fileRepository.save(FileConverter.saveFile(uploadFileUrl, assignment, user));
 
             listUrl.add(uploadFileUrl);
         }
@@ -91,7 +91,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
     }
 
     private Optional<java.io.File> convert(MultipartFile file) throws IOException { // 파일화
-        java.io.File convertFile = new java.io.File(file.getOriginalFilename());
+        java.io.File convertFile = new java.io.File(Objects.requireNonNull(file.getOriginalFilename()));
         file.transferTo(convertFile);
         return Optional.of(convertFile);
     }

@@ -9,7 +9,7 @@ import java.util.List;
 
 @NoArgsConstructor
 public class FileConverter {
-    public static File toFile(String uploadFileUrl, Assignment assignment, User user) {
+    public static File saveFile(String uploadFileUrl, Assignment assignment, User user) {
         return File.builder()
                 .submitter(user.getUsername())
                 .isDeleted(0)
