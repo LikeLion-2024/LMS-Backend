@@ -19,13 +19,7 @@ public class SubmissionRequestDto {
         @Schema(description = "글이 작성된 과제 id")
         private Long assignmentId;
 
-        @Schema(description = "글 작성자")
-        private String submissionWriter;
-
         @Schema(description = "글 내용")
         private String submissionContents;
-
-        @Schema(description = "글 생성 시각")
-        private LocalDateTime submissionCreatedAt;
     }
 }
