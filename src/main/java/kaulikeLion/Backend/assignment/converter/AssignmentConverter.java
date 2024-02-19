@@ -5,21 +5,22 @@ import kaulikeLion.Backend.assignment.domain.Submission;
 import kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
 import kaulikeLion.Backend.assignment.dto.AssignmentResponseDto.*;
 import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto.*;
+import kaulikeLion.Backend.oauth.domain.User;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import java.util.List;
 
 @NoArgsConstructor
 public class AssignmentConverter {
-    public static Assignment saveAssignment(AssignmentReqDto assignment){
+    public static Assignment saveAssignment(AssignmentReqDto assignment, User user){
         return Assignment.builder()
-                .assignmentWriter(assignment.getAssignmentWriter())
+                .assignmentWriter(user.getUsername()) // 작성자
                 .assignmentPass(assignment.getAssignmentPass())
                 .assignmentTitle(assignment.getAssignmentTitle())
                 .assignmentContents(assignment.getAssignmentContents())
                 .dueDateTime(assignment.getDueDateTime())
                 .assignmentHits(0L)
-                .photoAttached(0)
+                .photoAttached(assignment.getPhotoAttached())
                 .build();
     }
 
