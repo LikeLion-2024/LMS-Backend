@@ -32,6 +32,11 @@ spring:
             scope:
               - email
 
+  servlet:
+    multipart:
+      maxFileSize: 10MB # 파일 하나의 최대 크기
+      maxRequestSize: 30MB  # 한 번에 최대 업로드 가능 용량
+
 # 리프레시 토큰
 #  data:
 #    redis:
@@ -58,6 +63,7 @@ cloud:
     credentials:
       accessKey: ${aws.s3.access.key}
       secretKey: ${aws.s3.secret.key}
+
 
 springdoc:
   swagger-ui:
