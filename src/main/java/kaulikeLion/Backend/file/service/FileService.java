@@ -1,26 +1,29 @@
-package kaulikeLion.Backend.file;
+package kaulikeLion.Backend.file.service;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import kaulikeLion.Backend.global.api_payload.ApiResponse;
+import kaulikeLion.Backend.assignment.domain.Assignment;
+import kaulikeLion.Backend.assignment.repository.AssignmentRepository;
+import kaulikeLion.Backend.file.converter.FileConverter;
+import kaulikeLion.Backend.file.domain.File;
+import kaulikeLion.Backend.file.repository.FileRepository;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
-import kaulikeLion.Backend.global.api_payload.SuccessCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
-import org.springframework.http.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
@@ -30,51 +33,71 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
-public class S3FileComponent { // S3 연동 - 업로드, 삭제, 다운로드
+public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
 
     private final AmazonS3 amazonS3;
+    private final FileRepository fileRepository;
+    private final AssignmentRepository assignmentRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public List<String> upload(MultipartFile[] multipleFile, String dirName) throws IOException { // 객체 업로드
+    public List<File> findAllByAssignmentId(Long id){
+        Assignment assignment = assignmentRepository.findById(id)
+                .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
+
+        return fileRepository.findAllByAssignmentOrderByIdAsc(assignment);
+    }
+
+    public List<String> upload(MultipartFile[] multipleFile, String dirName, Long assignmentId) throws IOException { // 객체 업로드
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
+
         List<String> listUrl = new ArrayList<>();
         for (MultipartFile mf : multipleFile) {
-            String contentType = mf.getContentType(); // 파일의 확장자 추출
-            if (ObjectUtils.isEmpty(contentType)) { // 확장자명이 존재하지 않을 경우 전체 취소 처리
+
+            // 파일의 확장자 추출
+            String contentType = mf.getContentType();
+            if (ObjectUtils.isEmpty(contentType)) { // 확장자명이 존재하지 않을 경우 취소 처리
                 throw GeneralException.of(ErrorCode.INVALID_FILE_CONTENT_TYPE);
             }
 
-            File uploadFile = convert(mf) // 파일 리스트 하나씩 업로드
+            // 파일 리스트 하나씩 업로드
+            java.io.File uploadFile = convert(mf)
                     .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
 
-            // 날짜 추가
-            String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("/yyyy-MM-dd HH:mm"));
+            // 날짜, 시각 추가
+            String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("/MM-dd-HH-mm"));
             String fileName = dirName + formatDate + uploadFile.getName();
+
             // put - S3로 업로드
-            String uploadImageUrl = putS3(uploadFile, fileName);
+            String uploadFileUrl = putS3(uploadFile, fileName);
+
             // 로컬 파일 삭제
             // removeFile(uploadFile);
 
-            listUrl.add(uploadImageUrl);
+            // db에 file 저장
+            fileRepository.save(FileConverter.toFile(uploadFileUrl, assignment));
+
+            listUrl.add(uploadFileUrl);
         }
         return listUrl;
     }
 
-    private Optional<File> convert(MultipartFile file) throws IOException { // 파일화
-        File convertFile = new File(file.getOriginalFilename());
+    private Optional<java.io.File> convert(MultipartFile file) throws IOException { // 파일화
+        java.io.File convertFile = new java.io.File(file.getOriginalFilename());
         file.transferTo(convertFile);
         return Optional.of(convertFile);
     }
 
-    private String putS3(File uploadFile, String fileName) { // S3로 업로드
+    private String putS3(java.io.File uploadFile, String fileName) { // S3로 업로드
         amazonS3.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
-    private void removeFile(File targetFile) { // 로컬파일 삭제
+    private void removeFile(java.io.File targetFile) { // 로컬파일 삭제
         if (targetFile.exists()) {
             if (targetFile.delete()) {
                 log.info("파일이 삭제되었습니다.");
@@ -84,17 +107,34 @@ public class S3FileComponent { // S3 연동 - 업로드, 삭제, 다운로드
         }
     }
 
-    public ApiResponse<?> delete(String filePath) { // 객체 삭제  filePath : 폴더명/파일네임.파일확장자
+    public void delete(String filePath) { // db에서는 일부로 삭제 안함
         try {
             // S3에서 삭제
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, filePath));
-            System.out.println(String.format("[%s] deletion complete", filePath));
+
+            // filePath -> URL
+            String fileUrl = "https://liklion-lms.s3.ap-northeast-2.amazonaws.com/" + filePath;
+            log.info("fileUrl: " + fileUrl);
+
+            // URL로 파일 찾음
+            File file = fileRepository.findByFileUrl(fileUrl);
+
+            if (file != null) {
+                // isDeleted = 1로 변경. 동시에 삭제 시각 updated_at에 찍힘
+                file.setIsDeleted(1);
+                fileRepository.save(file);
+            } else {
+                // 파일을 찾지 못한 경우에 대한 처리
+                throw new FileNotFoundException("File not found with URL: " + fileUrl);
+            }
+
         } catch (AmazonServiceException e) {
             e.printStackTrace();
         } catch (SdkClientException e) {
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        return ApiResponse.onSuccess(SuccessCode.FILE_DELETE_SUCCESS, "delete file");
     }
 
     public ResponseEntity<byte[]> download(String fileUrl) throws IOException { // 객체 다운  fileUrl : 폴더명/파일네임.파일확장자
