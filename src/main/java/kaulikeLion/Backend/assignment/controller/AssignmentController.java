@@ -32,7 +32,6 @@ public class AssignmentController {
     private final AssignmentService assignmentService;
     private final SubmissionService submissionService;
 
-    // 과제 만들기
     @Operation(summary = "과제 만들기 메서드", description = "과제를 만드는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2011", description = "과제 생성이 완료되었습니다.")
@@ -48,7 +47,6 @@ public class AssignmentController {
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_CREATED, AssignmentConverter.simpleAssignmentDto(assignment));
     }
 
-    // 과제 목록 조회 - 누구나 접근 가능
     @Operation(summary = "과제 목록 정보 조회 메서드", description = "과제 목록을 조회하는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2001", description = "과제 목록 조회가 완료되었습니다.")
@@ -63,7 +61,6 @@ public class AssignmentController {
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_LIST_VIEW_SUCCESS, AssignmentConverter.assignmentListResDto(assignments));
     }
 
-    // 과제 상세 조회
     @Operation(summary = "과제 상세 조회 메서드", description = "과제 상세 정보를 조회하는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2002", description = "과제 상세 조회가 완료되었습니다.")
@@ -73,18 +70,14 @@ public class AssignmentController {
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        // 해당 게시글의 조회수 하나 올리기
+        // 해당 게시글의 조회수 +1
         Assignment assignment = assignmentService.increaseViewCount(assignmentService.findById(id));
-
         // 과제 제출 목록 가져오기
         List<Submission> submissions = submissionService.findAllByAssignmentId(id);
-
-        // 과제 파일 제출 목록 가져오기
 
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DETAIL_VIEW_SUCCESS, AssignmentConverter.detailAssignmentDto(assignment, submissions));
     }
 
-    // 과제 수정
     @Operation(summary = "과제 수정 메서드", description = "과제 정보를 수정하는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2003", description = "글 수정이 완료되었습니다.")
@@ -96,12 +89,12 @@ public class AssignmentController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         Assignment assignment = assignmentService.updateAssignment(id, detailAssignmentReqDto);
+        // 과제 제출 목록 가져오기
         List<Submission> submissions = submissionService.findAllByAssignmentId(id);
 
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_UPDATED, AssignmentConverter.detailAssignmentDto(assignment, submissions));
     }
 
-    // 과제 삭제
     @Operation(summary = "과제 삭제 메서드", description = "과제를 삭제하는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2004", description = "과제 삭제가 완료되었습니다.")
