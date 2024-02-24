@@ -41,8 +41,8 @@ public class SubmissionService {
         Long assignmentId = submission.getAssignment().getId();
 
         log.info("SubmissionWriter: " + submission.getSubmissionWriter());
-        log.info("Username: " + user.getUsername());
-        if(Objects.equals(submission.getSubmissionWriter(), user.getUsername())){
+        log.info("Nickname: " + user.getNickname());
+        if(Objects.equals(submission.getSubmissionWriter(), user.getNickname())){
             submissionRepository.delete(submission);}
 
         return assignmentId;

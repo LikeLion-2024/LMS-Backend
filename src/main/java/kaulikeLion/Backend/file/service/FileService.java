@@ -122,8 +122,8 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
             if(file != null) { // db에 파일이 존재하고
                 // 작성자와 삭제하려는 자가 동일인이어야 삭제 가능
                 log.info("Submitter: " + file.getSubmitter());
-                log.info("Username: " + user.getUsername());
-                if (Objects.equals(file.getSubmitter(), user.getUsername())) {
+                log.info("Nickname: " + user.getNickname());
+                if (Objects.equals(file.getSubmitter(), user.getNickname())) {
                     // S3에서 삭제 - repository와 상관없이 실행됨
                     amazonS3.deleteObject(new DeleteObjectRequest(bucket, filePath));
                     // isDeleted = 1로 변경. 동시에 삭제 시각 updated_at에 찍힘

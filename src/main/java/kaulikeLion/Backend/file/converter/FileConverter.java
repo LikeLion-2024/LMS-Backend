@@ -11,7 +11,7 @@ import java.util.List;
 public class FileConverter {
     public static File saveFile(String uploadFileUrl, Assignment assignment, User user) {
         return File.builder()
-                .submitter(user.getUsername())
+                .submitter(user.getNickname())
                 .isDeleted(0)
                 .fileUrl(uploadFileUrl)
                 .user(user)
@@ -25,7 +25,6 @@ public class FileConverter {
                 .submitter(file.getSubmitter())
                 .isDeleted(file.getIsDeleted())
                 .fileUrl(file.getFileUrl())
-                .submitter(file.getSubmitter())
                 .build();
     }
 

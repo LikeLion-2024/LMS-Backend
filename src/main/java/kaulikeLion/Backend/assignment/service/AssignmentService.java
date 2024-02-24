@@ -47,7 +47,7 @@ public class AssignmentService {
 
         if(Objects.equals(assignment.getAssignmentPass(), detailAssignmentReqDto.getAssignmentPass())){
             // 업데이트할 내용 설정
-            assignment.setAssignmentWriter(user.getUsername());
+            assignment.setAssignmentWriter(user.getNickname());
             assignment.setAssignmentTitle(detailAssignmentReqDto.getAssignmentTitle());
             assignment.setAssignmentContents(detailAssignmentReqDto.getAssignmentContents());
             assignment.setDueDateTime(detailAssignmentReqDto.getDueDateTime());
@@ -95,9 +95,9 @@ public class AssignmentService {
                 .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
 
         log.info("AssignmentWriter: " + assignment.getAssignmentWriter());
-        log.info("Username: " + user.getUsername());
+        log.info("Nickname: " + user.getNickname());
 
-        if(Objects.equals(assignment.getAssignmentWriter(), user.getUsername())){
+        if(Objects.equals(assignment.getAssignmentWriter(), user.getNickname())){
             // 연관된 Submission 엔티티들 삭제
             List<Submission> submissions = assignment.getSubmissionList();
             submissionRepository.deleteAll(submissions);
