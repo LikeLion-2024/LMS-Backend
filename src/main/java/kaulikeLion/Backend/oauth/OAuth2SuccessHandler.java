@@ -52,10 +52,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 = (OAuth2User) authentication.getPrincipal();
         // 소셜 로그인을 한 새로운 사용자를 우리의 UserEntity로 전환
         String email = oAuth2User.getAttribute("email");
-        String nickname = oAuth2User.getAttribute("nickname");
+        String nickname = "your_nickname";
+        String groupname = "your_groupname";
         String provider = oAuth2User.getAttribute("provider");
+        assert email != null;
         String username
-                = String.format("{%s}%s", provider, email.split("@")[0]);
+                = String.format("%s", email.split("@")[0]);
         String providerId = oAuth2User.getAttribute("id").toString();
 
         // 처음으로 소셜 로그인한 사용자를 데이터베이스에 등록
@@ -65,6 +67,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     .password(providerId)
                     .email(email)
                     .nickname(nickname)
+                    .groupname(groupname)
                     .provider(provider)
                     .providerId(providerId)
                     .build());
