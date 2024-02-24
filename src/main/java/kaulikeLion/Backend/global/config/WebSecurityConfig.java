@@ -28,7 +28,10 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authHttp -> authHttp
-                                .requestMatchers("/oauth2/authorization/naver", "/users/**")
+                                .requestMatchers(
+                                        "/oauth2/authorization/naver", // login
+                                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html" // swagger
+                                )
                                 .permitAll()
                                 .anyRequest().permitAll()
                                 //.anyRequest().authenticated()
