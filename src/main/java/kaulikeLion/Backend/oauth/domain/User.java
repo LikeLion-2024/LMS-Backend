@@ -19,7 +19,7 @@ public class User{
     private String password;
     private String email;
 
-    private String groupName; // 속한 그룹 이름
+    private String groupname; // 속한 그룹 이름
     private String nickname; // 닉네임
 
     // Naver, Kakao 등 소셜 로그인 제공자 문자값

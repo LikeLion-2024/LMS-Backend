@@ -9,7 +9,9 @@ import kaulikeLion.Backend.file.service.FileService;
 import kaulikeLion.Backend.file.domain.File;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
 import kaulikeLion.Backend.global.api_payload.SuccessCode;
+import kaulikeLion.Backend.oauth.domain.User;
 import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
+import kaulikeLion.Backend.oauth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +28,7 @@ import java.util.List;
 public class FileController {
 
     private final FileService fileService;
+    private final UserService userService;
 
     @Operation(summary = "다중 파일 업로드 메서드", description = "파일 형태인 과제를 제출하는 메서드입니다.")
     @ApiResponses(value = {
@@ -39,7 +42,9 @@ public class FileController {
             @RequestPart("files") MultipartFile[] files,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException {
-        fileService.upload(files, code + "/" + id, assignmentId); // 지정된 buket에 /code/id라는 디렉터리로 files를 업로드
+        User user = userService.findUserByUserName(customUserDetails.getUsername());
+        // 제출자 이름이 db에 저장됨
+        fileService.upload(files, code + "/" + id, assignmentId, user); // 지정된 buket에 /code/id라는 디렉터리로 files를 업로드
         List<File> fileList = fileService.findAllByAssignmentId(assignmentId);
 
         return ApiResponse.onSuccess(SuccessCode.FILE_UPLOAD_SUCCESS, FileConverter.fileListResDto(fileList));
@@ -68,7 +73,10 @@ public class FileController {
             @RequestParam("filePath") String filePath,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        fileService.delete(filePath);
+        User user = userService.findUserByUserName(customUserDetails.getUsername());
+        // submitter 당사자만 삭제 가능
+        fileService.delete(filePath, user);
+
         return ApiResponse.onSuccess(SuccessCode.FILE_DELETE_SUCCESS, "file deleted");
     }
 
@@ -81,6 +89,7 @@ public class FileController {
                                            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException {
         String filePath = fileUrl.substring(52);
+
         return fileService.download(filePath); // 리턴 url == 다운로드 링크
     }
 }

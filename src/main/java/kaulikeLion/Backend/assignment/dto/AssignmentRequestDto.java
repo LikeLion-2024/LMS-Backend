@@ -14,8 +14,6 @@ public class AssignmentRequestDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AssignmentReqDto {
-        @Schema(description = "과제 작성자")
-        private String assignmentWriter;
 
         @Schema(description = "과제 비밀번호")
         private String assignmentPass;
@@ -26,14 +24,8 @@ public class AssignmentRequestDto {
         @Schema(description = "과제 내용")
         private String assignmentContents;
 
-        @Schema(description = "과제 조회수")
-        private Long assignmentHits;
-
         @Schema(description = "과제 마감 기한")
         private LocalDateTime dueDateTime;
-
-        @Schema(description = "과제 생성 시각")
-        private LocalDateTime assignmentCreatedAt;
 
         @Schema(description = "과제 사진 첨부 여부(첨부1, 미첨부0)")
         private int photoAttached;
@@ -48,9 +40,6 @@ public class AssignmentRequestDto {
         @Schema(description = "과제 id")
         private Long id;
 
-        @Schema(description = "과제 작성자")
-        private String assignmentWriter;
-
         @Schema(description = "과제 비밀번호")
         private String assignmentPass;
 
@@ -62,9 +51,6 @@ public class AssignmentRequestDto {
 
         @Schema(description = "과제 마감 기한")
         private LocalDateTime dueDateTime;
-
-        @Schema(description = "과제 생성 시각")
-        private LocalDateTime assignmentCreatedAt;
 
         @Schema(description = "과제 사진 첨부 여부(첨부1, 미첨부0)")
         private int photoAttached;

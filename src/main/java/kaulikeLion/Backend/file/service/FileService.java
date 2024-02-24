@@ -6,12 +6,15 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import kaulikeLion.Backend.assignment.domain.Assignment;
+import kaulikeLion.Backend.assignment.domain.Submission;
+import kaulikeLion.Backend.assignment.domain.ViewCount;
 import kaulikeLion.Backend.assignment.repository.AssignmentRepository;
 import kaulikeLion.Backend.file.converter.FileConverter;
 import kaulikeLion.Backend.file.domain.File;
 import kaulikeLion.Backend.file.repository.FileRepository;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
+import kaulikeLion.Backend.oauth.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -51,7 +55,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
         return fileRepository.findAllByAssignmentOrderByIdAsc(assignment);
     }
 
-    public List<String> upload(MultipartFile[] multipleFile, String dirName, Long assignmentId) throws IOException { // 객체 업로드
+    public List<String> upload(MultipartFile[] multipleFile, String dirName, Long assignmentId, User user) throws IOException { // 객체 업로드
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
 
@@ -79,7 +83,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
             // removeFile(uploadFile);
 
             // db에 file 저장
-            fileRepository.save(FileConverter.toFile(uploadFileUrl, assignment));
+            fileRepository.save(FileConverter.saveFile(uploadFileUrl, assignment, user));
 
             listUrl.add(uploadFileUrl);
         }
@@ -87,7 +91,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
     }
 
     private Optional<java.io.File> convert(MultipartFile file) throws IOException { // 파일화
-        java.io.File convertFile = new java.io.File(file.getOriginalFilename());
+        java.io.File convertFile = new java.io.File(Objects.requireNonNull(file.getOriginalFilename()));
         file.transferTo(convertFile);
         return Optional.of(convertFile);
     }
@@ -107,29 +111,27 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
         }
     }
 
-    public void delete(String filePath) { // db에서는 일부로 삭제 안함
+    public void delete(String filePath, User user) { // db에서는 일부로 삭제 안함
         try {
-            // S3에서 삭제
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, filePath));
-
             // filePath -> URL
             String fileUrl = "https://liklion-lms.s3.ap-northeast-2.amazonaws.com/" + filePath;
             log.info("fileUrl: " + fileUrl);
-
             // URL로 파일 찾음
             File file = fileRepository.findByFileUrl(fileUrl);
 
-            if (file != null) {
-                // isDeleted = 1로 변경. 동시에 삭제 시각 updated_at에 찍힘
-                file.setIsDeleted(1);
-                fileRepository.save(file);
-            } else {
-                // 파일을 찾지 못한 경우에 대한 처리
-                throw new FileNotFoundException("File not found with URL: " + fileUrl);
-            }
+            if(file != null) { // db에 파일이 존재하고
+                // 작성자와 삭제하려는 자가 동일인이어야 삭제 가능
+                log.info("Submitter: " + file.getSubmitter());
+                log.info("Nickname: " + user.getNickname());
+                if (Objects.equals(file.getSubmitter(), user.getNickname())) {
+                    // S3에서 삭제 - repository와 상관없이 실행됨
+                    amazonS3.deleteObject(new DeleteObjectRequest(bucket, filePath));
+                    // isDeleted = 1로 변경. 동시에 삭제 시각 updated_at에 찍힘
+                    file.setIsDeleted(1);
+                    fileRepository.save(file);
+                } else throw new GeneralException(ErrorCode.BAD_REQUEST);
+            } else throw new FileNotFoundException("File not found with URL: " + fileUrl);
 
-        } catch (AmazonServiceException e) {
-            e.printStackTrace();
         } catch (SdkClientException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

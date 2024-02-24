@@ -42,6 +42,7 @@ public class AssignmentController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         User user = userService.findUserByUserName(customUserDetails.getUsername());
+        // writer가 username으로 들어감
         Assignment assignment = assignmentService.createAssignment(assignmentReqDto, user);
 
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_CREATED, AssignmentConverter.simpleAssignmentDto(assignment));
@@ -51,7 +52,7 @@ public class AssignmentController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2001", description = "과제 목록 조회가 완료되었습니다.")
     })
-    @GetMapping("/list")
+    @GetMapping("/list") // 로그인 없이 열람 가능
     public ApiResponse<AssignmentListResDto> list(
             @RequestParam(name = "page") Integer page
     ){
@@ -70,6 +71,7 @@ public class AssignmentController {
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
+        User user = userService.findUserByUserName(customUserDetails.getUsername());
         // 해당 게시글의 조회수 +1
         Assignment assignment = assignmentService.increaseViewCount(assignmentService.findById(id));
         // 과제 제출 목록 가져오기
@@ -88,7 +90,10 @@ public class AssignmentController {
             @RequestBody DetailAssignmentReqDto detailAssignmentReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
-        Assignment assignment = assignmentService.updateAssignment(id, detailAssignmentReqDto);
+        User user = userService.findUserByUserName(customUserDetails.getUsername());
+        // 비밀 번호 옳으면 수정 가능. 수정자가 writer로 바뀜
+        // 비밀번호 틀리면 수정하려고 작성한 내용 초기화되고, 기존 내용 유지됨.
+        Assignment assignment = assignmentService.updateAssignment(id, detailAssignmentReqDto, user);
         // 과제 제출 목록 가져오기
         List<Submission> submissions = submissionService.findAllByAssignmentId(id);
 
@@ -104,7 +109,9 @@ public class AssignmentController {
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
-        assignmentService.deleteAssignment(id);
+        User user = userService.findUserByUserName(customUserDetails.getUsername());
+        // writer(작성자 or 수정자)인 사람만 삭제 가능
+        assignmentService.deleteAssignment(id, user);
 
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DELETED, 1);
     }

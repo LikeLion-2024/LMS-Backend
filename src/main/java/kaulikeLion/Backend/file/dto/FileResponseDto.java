@@ -18,11 +18,14 @@ public class FileResponseDto {
         @Schema(description = "파일 id")
         private Long id;
 
-        @Schema(description = "파일 url")
-        private String fileUrl;
+        @Schema(description = "제출자")
+        private String submitter;
 
         @Schema(description = "파일 삭제 유무")
         private Integer isDeleted;
+
+        @Schema(description = "파일 url")
+        private String fileUrl;
     }
 
     @Schema(description = "FileListResDto")

@@ -9,6 +9,7 @@ import kaulikeLion.Backend.assignment.dto.SubmissionRequestDto;
 import kaulikeLion.Backend.assignment.dto.SubmissionRequestDto.SubmissionDto;
 import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto;
 import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto.*;
+import kaulikeLion.Backend.oauth.domain.User;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -17,9 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 public class SubmissionConverter {
 
-    public static Submission toSubmission(SubmissionDto submission, Assignment assignment){
+    public static Submission saveSubmission(SubmissionDto submission, Assignment assignment, User user){
         return Submission.builder()
-                .submissionWriter(submission.getSubmissionWriter())
+                .submissionWriter(user.getNickname()) // 작성자
                 .submissionContents(submission.getSubmissionContents())
                 .assignment(assignment)
                 .build();
@@ -42,5 +43,4 @@ public class SubmissionConverter {
                 .submissionList(submissionDtos)
                 .build();
     }
-
 }

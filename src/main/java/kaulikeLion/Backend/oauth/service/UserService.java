@@ -3,9 +3,11 @@ package kaulikeLion.Backend.oauth.service;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
 import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.oauth.dto.MypageRequestDto;
 import kaulikeLion.Backend.oauth.jwt.JwtDto;
 import kaulikeLion.Backend.oauth.jwt.JwtTokenUtils;
 import kaulikeLion.Backend.oauth.jwt.RefreshToken;
@@ -92,5 +94,12 @@ public class UserService {
     public User findUserByUserName(String userName){
         return userRepository.findByUsername(userName)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Transactional
+    public User updateUser(MypageRequestDto.SimpleMypageReqDto simpleMypageReqDto, User user) {
+        user.setGroupname(simpleMypageReqDto.getGroupname());
+        user.setNickname(simpleMypageReqDto.getNickname());
+        return userRepository.save(user);
     }
 }

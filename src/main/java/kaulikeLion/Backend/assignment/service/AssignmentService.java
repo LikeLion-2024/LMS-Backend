@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -33,27 +34,29 @@ public class AssignmentService {
 
     @Transactional
     public Assignment createAssignment(AssignmentReqDto assignmentReqDto, User user) {
-        Assignment assignment = AssignmentConverter.saveAssignment(assignmentReqDto);
+        Assignment assignment = AssignmentConverter.saveAssignment(assignmentReqDto, user);
         assignmentRepository.save(assignment);
 
         return assignment;
     }
 
     @Transactional
-    public Assignment updateAssignment(Long id, DetailAssignmentReqDto detailAssignmentReqDto) {
+    public Assignment updateAssignment(Long id, DetailAssignmentReqDto detailAssignmentReqDto, User user) {
         Assignment assignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
 
-        // 업데이트할 내용 설정
-        assignment.setAssignmentWriter(detailAssignmentReqDto.getAssignmentWriter());
-        //assignment.setAssignmentPass(detailAssignmentReqDto.getAssignmentPass());
-        assignment.setAssignmentTitle(detailAssignmentReqDto.getAssignmentTitle());
-        assignment.setAssignmentContents(detailAssignmentReqDto.getAssignmentContents());
-        assignment.setDueDateTime(detailAssignmentReqDto.getDueDateTime());
-        assignment.setPhotoAttached(detailAssignmentReqDto.getPhotoAttached());
+        if(Objects.equals(assignment.getAssignmentPass(), detailAssignmentReqDto.getAssignmentPass())){
+            // 업데이트할 내용 설정
+            assignment.setAssignmentWriter(user.getNickname());
+            assignment.setAssignmentTitle(detailAssignmentReqDto.getAssignmentTitle());
+            assignment.setAssignmentContents(detailAssignmentReqDto.getAssignmentContents());
+            assignment.setDueDateTime(detailAssignmentReqDto.getDueDateTime());
+            assignment.setPhotoAttached(detailAssignmentReqDto.getPhotoAttached());
 
-        assignmentRepository.save(assignment);
+            assignmentRepository.save(assignment);
 
+            return assignment;
+        }
         return assignment;
     }
 
@@ -87,19 +90,25 @@ public class AssignmentService {
     }
 
     @Transactional
-    public void deleteAssignment(Long id){
+    public void deleteAssignment(Long id, User user){
         Assignment assignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
 
-        // 연관된 Submission 엔티티들 삭제
-        List<Submission> submissions = assignment.getSubmissionList();
-        submissionRepository.deleteAll(submissions);
+        log.info("AssignmentWriter: " + assignment.getAssignmentWriter());
+        log.info("Nickname: " + user.getNickname());
 
-        // 연관된 viewCount 엔티티 삭제
-        List<ViewCount> viewCounts = viewCountRepository.findAllByAssignmentId(id);
-        viewCountRepository.deleteAll(viewCounts);
+        if(Objects.equals(assignment.getAssignmentWriter(), user.getNickname())){
+            // 연관된 Submission 엔티티들 삭제
+            List<Submission> submissions = assignment.getSubmissionList();
+            submissionRepository.deleteAll(submissions);
 
-        // 과제 삭제
-        assignmentRepository.deleteById(id);
+            // 연관된 viewCount 엔티티 삭제
+            List<ViewCount> viewCounts = viewCountRepository.findAllByAssignmentId(id);
+            viewCountRepository.deleteAll(viewCounts);
+
+            // 과제 삭제
+            assignmentRepository.deleteById(id);
+        }
+        else throw new GeneralException(ErrorCode.BAD_REQUEST);
     }
 }

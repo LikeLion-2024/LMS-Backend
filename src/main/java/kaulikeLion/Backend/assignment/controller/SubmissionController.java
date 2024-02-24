@@ -38,6 +38,7 @@ public class SubmissionController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         User user = userService.findUserByUserName(customUserDetails.getUsername());
+        // writer가 username으로 들어감
         Submission submission = submissionService.createSubmission(submissionDto, user);
         List<Submission> submissions = submissionService.findAllByAssignmentId(submission.getAssignment().getId());
 
@@ -53,7 +54,9 @@ public class SubmissionController {
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
-        Long assignmentId = submissionService.deleteSubmission(id);
+        User user = userService.findUserByUserName(customUserDetails.getUsername());
+        // 작성자만 삭제할 수 있음
+        Long assignmentId = submissionService.deleteSubmission(id, user);
         List<Submission> submissions = submissionService.findAllByAssignmentId(assignmentId);
 
         return ApiResponse.onSuccess(SuccessCode.SUBMISSION_DELETED,SubmissionConverter.submissionListResDto(submissions));
