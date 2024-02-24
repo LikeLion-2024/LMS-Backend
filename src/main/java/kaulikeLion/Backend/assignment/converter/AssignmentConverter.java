@@ -14,7 +14,7 @@ import java.util.List;
 public class AssignmentConverter {
     public static Assignment saveAssignment(AssignmentReqDto assignment, User user){
         return Assignment.builder()
-                .assignmentWriter(user.getUsername()) // 작성자
+                .assignmentWriter(user.getNickname()) // 작성자
                 .assignmentPass(assignment.getAssignmentPass())
                 .assignmentTitle(assignment.getAssignmentTitle())
                 .assignmentContents(assignment.getAssignmentContents())

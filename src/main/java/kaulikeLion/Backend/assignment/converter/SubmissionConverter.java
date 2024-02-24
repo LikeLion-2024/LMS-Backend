@@ -20,7 +20,7 @@ public class SubmissionConverter {
 
     public static Submission saveSubmission(SubmissionDto submission, Assignment assignment, User user){
         return Submission.builder()
-                .submissionWriter(user.getUsername()) // 작성자
+                .submissionWriter(user.getNickname()) // 작성자
                 .submissionContents(submission.getSubmissionContents())
                 .assignment(assignment)
                 .build();
