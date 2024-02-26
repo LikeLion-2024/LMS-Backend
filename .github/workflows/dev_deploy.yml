@@ -1,0 +1,64 @@
+name: likeLion dev CI/CD
+
+on:
+  pull_request:
+    types: [closed] # 머지가 됐을 때 돌아라
+  workflow_dispatch: # (2).수동 실행도 가능하도록
+
+jobs:
+  build:
+    runs-on: ubuntu-latest #(3).OS환경: 리눅스(우분트) 기반으로 할거다
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' # (16). 조건 수정
+
+    steps:
+      - name: Checkout # 정형화되어있지 않음
+        uses: actions/checkout@v4 #(4).코드 check out #리포지토리 최상단부터 check out!! -> .github이 맨 위에 있음
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4.0.0
+        with:
+          java-version: 17 #(5). 자바 설치
+          distribution: 'adopt' #세부사항
+
+      # 리눅스
+      - name: Grant execute permission for gradlew #권한주기
+        run: chmod +x gradlew
+        shell: bash #(6). 권한부여
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+        shell: bash #(7).build 시작
+
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: 'YYYY-MM-DDTHH:mm:ss'
+          utcOffset: '+09:00' #(8). build 시점의 시간 확보
+
+      - name: Show current time
+        run: echo "${{ steps.current-time.outputs.formattedTime }}"
+        shell: bash #(9).확보한 시간 보여주기
+
+      - name: Generate deployment package #제대로 빌드하는 과정
+        run: |
+          mkdir -p deploy
+          cp build/libs/*.jar deploy/application.jar
+          cp Procfile deploy/Procfile
+          cp -r .ebextensions_dev deploy/.ebextensions 
+          cp -r .platform deploy/.platform 
+          cd deploy && zip -r deploy.zip .
+        #ebextensions: beanstalk이 추가적으로 해줬으면 좋겠는거
+        #platform: 추가적인 플랫폼. ex) nginx
+
+      #beanstalk에게 나 이제 배포할꺼임 요청하는 것
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
+          application_name: project-dev
+          environment_name: Project-dev-env
+          version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
+          region: ap-northeast-2 #1
+          deployment_package: deploy/deploy.zip
+          wait_for_deployment: false
