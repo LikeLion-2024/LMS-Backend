@@ -50,7 +50,7 @@ jobs:
         #ebextensions: beanstalk이 추가적으로 해줬으면 좋겠는거
         #platform: 추가적인 플랫폼. ex) nginx
 
-      #beanstalk에게 나 이제 배포할꺼임 요청하는 것
+      #beanstalk에게 배포 요청
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
         with:
