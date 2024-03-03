@@ -2,7 +2,8 @@ name: likeLion dev CI/CD
 
 on:
   pull_request:
-    types: [closed] # 머지가 됐을 때 돌아라
+    types:
+      - closed # 머지가 됐을 때 돌아라
   workflow_dispatch: # (2).수동 실행도 가능하도록
 
 jobs:
@@ -56,8 +57,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }} #github에 등록 완료
           aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
-          application_name: LikeLion-dev
-          environment_name: LikeLion-dev-env
+          application_name: 'LikeLion-dev'
+          environment_name: 'LikeLion-dev-env'
           version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
           region: ap-northeast-2 #1
           deployment_package: deploy/deploy.zip
