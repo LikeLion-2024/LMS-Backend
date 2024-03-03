@@ -8,7 +8,8 @@ import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
 import kaulikeLion.Backend.oauth.jwt.JwtDto;
 import kaulikeLion.Backend.oauth.jwt.JwtTokenUtils;
 import kaulikeLion.Backend.oauth.jwt.RefreshToken;
-import kaulikeLion.Backend.oauth.repository.RefreshTokenRedisRepository;
+//import kaulikeLion.Backend.oauth.repository.RefreshTokenRedisRepository;
+import kaulikeLion.Backend.oauth.repository.RefreshTokenRepository;
 import kaulikeLion.Backend.oauth.utils.IpUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,16 +29,19 @@ import java.util.Optional;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtTokenUtils tokenUtils;
     private final UserDetailsManager userDetailsManager;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    //private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public OAuth2SuccessHandler(
             JwtTokenUtils tokenUtils,
             UserDetailsManager userDetailsManager,
-            RefreshTokenRedisRepository refreshTokenRedisRepository
+            //RefreshTokenRedisRepository refreshTokenRedisRepository
+            RefreshTokenRepository refreshTokenRepository
     ) {
         this.tokenUtils = tokenUtils;
         this.userDetailsManager = userDetailsManager;
-        this.refreshTokenRedisRepository = refreshTokenRedisRepository;
+        //this.refreshTokenRedisRepository = refreshTokenRedisRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Override
@@ -87,12 +91,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 - refreshTokenClaims.getIssuedAt().toInstant().getEpochSecond();
 
         // 사용자의 리프레시 토큰을 업데이트
-        Optional<RefreshToken> existingToken = refreshTokenRedisRepository.findById(username);
+        Optional<RefreshToken> existingToken = refreshTokenRepository.findById(username);
         if (existingToken.isPresent()) {
-            refreshTokenRedisRepository.deleteById(username);
+            refreshTokenRepository.deleteById(username);
         }
 
-        refreshTokenRedisRepository.save(
+        refreshTokenRepository.save(
                 RefreshToken.builder()
                         .id(username)
                         .ip(IpUtil.getClientIp(request))
