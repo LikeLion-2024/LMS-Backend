@@ -11,6 +11,7 @@ import kaulikeLion.Backend.assignment.repository.CommentRepository;
 import kaulikeLion.Backend.assignment.repository.ViewCountRepository;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
+import kaulikeLion.Backend.global.s3.AmazonS3Manager;
 import kaulikeLion.Backend.oauth.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,10 +34,27 @@ public class AssignmentService {
     private final AssignmentRepository assignmentRepository;
     private final CommentRepository commentRepository;
     private final ViewCountRepository viewCountRepository;
+    private final AmazonS3Manager amazonS3Manager;
 
     @Transactional
-    public Assignment createAssignment(AssignmentReqDto assignmentReqDto, User user) {
+    public Assignment createAssignment(AssignmentReqDto assignmentReqDto, String dirName, MultipartFile file, User user) throws IOException {
         Assignment assignment = AssignmentConverter.saveAssignment(assignmentReqDto, user);
+
+        String uploadFileUrl = null;
+
+        if (file != null && !file.isEmpty()) {
+            String contentType = file.getContentType();
+            if (ObjectUtils.isEmpty(contentType)) { // 확장자명이 존재하지 않을 경우 취소 처리
+                throw GeneralException.of(ErrorCode.INVALID_FILE_CONTENT_TYPE);
+            }
+            java.io.File uploadFile = amazonS3Manager.convert(file)
+                    .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+
+            String fileName = dirName + amazonS3Manager.generateFileName(file);
+            uploadFileUrl = amazonS3Manager.putS3(uploadFile, fileName);
+        }
+
+        assignment.setAssignmentImage(uploadFileUrl); // 사진 url 저장
         assignmentRepository.save(assignment);
 
         return assignment;

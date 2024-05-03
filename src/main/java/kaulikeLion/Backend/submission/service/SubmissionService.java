@@ -57,7 +57,7 @@ public class SubmissionService { // S3 연동 - 업로드, 삭제, 다운로드
             // 파일의 확장자 추출
             String contentType = mf.getContentType();
             if (ObjectUtils.isEmpty(contentType)) { // 확장자명이 존재하지 않을 경우 취소 처리
-                throw GeneralException.of(ErrorCode.INVALID_SUBMISSION_CONTENT_TYPE);
+                throw GeneralException.of(ErrorCode.INVALID_FILE_CONTENT_TYPE);
             }
 
             // 파일 리스트 하나씩 업로드

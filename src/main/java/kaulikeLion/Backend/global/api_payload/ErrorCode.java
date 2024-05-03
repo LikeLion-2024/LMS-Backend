@@ -30,7 +30,7 @@ public enum ErrorCode implements BaseCode {
 
     // Submission
     SUBMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "SUBMISSION_4041", "존재하지 않는 파일입니다."),
-    INVALID_SUBMISSION_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "SUBMISSION_4001", "파일에 확장자명이 없습니다."),
+    INVALID_FILE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "SUBMISSION_4001", "파일에 확장자명이 없습니다."),
 
     ;
 

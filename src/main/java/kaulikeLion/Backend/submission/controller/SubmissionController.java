@@ -44,7 +44,7 @@ public class SubmissionController {
     ) throws IOException {
         User user = userService.findUserByUserName(customUserDetails.getUsername());
         // 제출자 이름이 db에 저장됨
-        submissionService.upload(submission, "submission", assignmentId, user); // 지정된 buket에 /submission라는 디렉터리로 files를 업로드
+        submissionService.upload(submission, "submission", assignmentId, user);
         List<Submission> submissionList = submissionService.findAllByAssignmentId(assignmentId);
 
         return ApiResponse.onSuccess(SuccessCode.SUBMISSION_UPLOAD_SUCCESS, SubmissionConverter.submissionListResDto(submissionList));

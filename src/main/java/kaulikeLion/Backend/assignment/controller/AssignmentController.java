@@ -15,8 +15,12 @@ import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
 import kaulikeLion.Backend.oauth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 import static kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
@@ -36,16 +40,17 @@ public class AssignmentController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2011", description = "과제 생성이 완료되었습니다.")
     })
-    @PostMapping("/create")
-    public ApiResponse<SimpleAssignmentDto> create(
-            @RequestBody AssignmentReqDto assignmentReqDto,
+    @PostMapping(value ="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<Long> create(
+            @RequestPart(value = "board", required = false) MultipartFile file,
+            @RequestPart("data") AssignmentReqDto assignmentReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ){
+    ) throws IOException {
         User user = userService.findUserByUserName(customUserDetails.getUsername());
-        // writer가 username으로 들어감
-        Assignment assignment = assignmentService.createAssignment(assignmentReqDto, user);
+        String dirName = "assignment/";
+        Assignment assignment = assignmentService.createAssignment(assignmentReqDto, dirName, file, user);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_CREATED, AssignmentConverter.simpleAssignmentDto(assignment));
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_CREATED, assignment.getId());
     }
 
     @Operation(summary = "과제 목록 정보 조회 메서드", description = "과제 목록을 조회하는 메서드입니다.")

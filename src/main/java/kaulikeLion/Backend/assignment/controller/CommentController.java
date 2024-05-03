@@ -33,16 +33,15 @@ public class CommentController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "SUBMISSION_2011", description = "글 생성이 완료되었습니다.")
     })
     @PostMapping("/create")
-    public ApiResponse<CommentResponseDto.CommentListResDto> create(
+    public ApiResponse<Long> create(
             @RequestBody CommentRequestDto.CommentDto commentDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         User user = userService.findUserByUserName(customUserDetails.getUsername());
         // writer가 username으로 들어감
         Comment comment = commentService.createComment(commentDto, user);
-        List<Comment> comments = commentService.findAllByAssignmentId(comment.getAssignment().getId());
 
-        return ApiResponse.onSuccess(SuccessCode.COMMENT_CREATED, CommentConverter.commentListResDto(comments));
+        return ApiResponse.onSuccess(SuccessCode.COMMENT_CREATED, comment.getId());
     }
 
     @Operation(summary = "글 삭제 메서드", description = "글을 삭제하는 메서드입니다.")
