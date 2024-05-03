@@ -26,7 +26,7 @@ public enum ErrorCode implements BaseCode {
     ASSIGNMENT_DELETE_ERROR(HttpStatus.FORBIDDEN, "ASSIGNMENT_4042", "댓글이 있어 과제를 삭제할 수 없습니다."),
 
     // Submission
-    SUBMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "SUBMISSION_4041", "존재하지 않는 글입니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT_4041", "존재하지 않는 댓글입니다."),
 
     // File
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "FILE_4041", "존재하지 않는 파일입니다."),

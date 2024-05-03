@@ -1,15 +1,13 @@
 package kaulikeLion.Backend.assignment.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import kaulikeLion.Backend.assignment.domain.Submission;
+import kaulikeLion.Backend.assignment.domain.Comment;
 import kaulikeLion.Backend.assignment.domain.ViewCount;
-import kaulikeLion.Backend.assignment.dto.AssignmentRequestDto;
 import kaulikeLion.Backend.assignment.repository.AssignmentRepository;
 import kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
 import kaulikeLion.Backend.assignment.converter.AssignmentConverter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
-import kaulikeLion.Backend.assignment.repository.SubmissionRepository;
+import kaulikeLion.Backend.assignment.repository.CommentRepository;
 import kaulikeLion.Backend.assignment.repository.ViewCountRepository;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
@@ -29,7 +27,7 @@ import java.util.Objects;
 public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
-    private final SubmissionRepository submissionRepository;
+    private final CommentRepository commentRepository;
     private final ViewCountRepository viewCountRepository;
 
     @Transactional
@@ -51,7 +49,6 @@ public class AssignmentService {
             assignment.setAssignmentTitle(detailAssignmentReqDto.getAssignmentTitle());
             assignment.setAssignmentContents(detailAssignmentReqDto.getAssignmentContents());
             assignment.setDueDateTime(detailAssignmentReqDto.getDueDateTime());
-            assignment.setPhotoAttached(detailAssignmentReqDto.getPhotoAttached());
 
             assignmentRepository.save(assignment);
 
@@ -98,9 +95,9 @@ public class AssignmentService {
         log.info("Nickname: " + user.getNickname());
 
         if(Objects.equals(assignment.getAssignmentWriter(), user.getNickname())){
-            // 연관된 Submission 엔티티들 삭제
-            List<Submission> submissions = assignment.getSubmissionList();
-            submissionRepository.deleteAll(submissions);
+            // 연관된 comment 엔티티들 삭제
+            List<Comment> comments = assignment.getCommentList();
+            commentRepository.deleteAll(comments);
 
             // 연관된 viewCount 엔티티 삭제
             List<ViewCount> viewCounts = viewCountRepository.findAllByAssignmentId(id);

@@ -11,11 +11,11 @@ import java.util.List;
 public class FileConverter {
     public static File saveFile(String uploadFileUrl, Assignment assignment, User user) {
         return File.builder()
+                .user(user)
+                .assignment(assignment)
                 .submitter(user.getNickname())
                 .isDeleted(0)
                 .fileUrl(uploadFileUrl)
-                .user(user)
-                .assignment(assignment)
                 .build();
     }
 

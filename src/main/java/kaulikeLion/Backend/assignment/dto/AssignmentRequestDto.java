@@ -26,9 +26,6 @@ public class AssignmentRequestDto {
 
         @Schema(description = "과제 마감 기한")
         private LocalDateTime dueDateTime;
-
-        @Schema(description = "과제 사진 첨부 여부(첨부1, 미첨부0)")
-        private int photoAttached;
     }
 
     @Schema(description = "DetailAssignmentReqDto")

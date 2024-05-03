@@ -9,6 +9,7 @@ import kaulikeLion.Backend.file.service.FileService;
 import kaulikeLion.Backend.file.domain.File;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
 import kaulikeLion.Backend.global.api_payload.SuccessCode;
+import kaulikeLion.Backend.global.s3.AmazonS3Manager;
 import kaulikeLion.Backend.oauth.domain.User;
 import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
 import kaulikeLion.Backend.oauth.service.UserService;
@@ -17,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -29,6 +29,8 @@ public class FileController {
 
     private final FileService fileService;
     private final UserService userService;
+    private final AmazonS3Manager amazonS3Manager;
+
 
     @Operation(summary = "다중 파일 업로드 메서드", description = "파일 형태인 과제를 제출하는 메서드입니다.")
     @ApiResponses(value = {
@@ -37,14 +39,12 @@ public class FileController {
     @PostMapping(value = "/upload", consumes = "multipart/*") // multipart/form-data
     public ApiResponse<FileResponseDto.FileListResDto> upload(
             @RequestParam("assignmentId") Long assignmentId,
-            @RequestParam("code") String code,
-            @RequestParam("id") String id,
             @RequestPart("files") MultipartFile[] files,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException {
         User user = userService.findUserByUserName(customUserDetails.getUsername());
         // 제출자 이름이 db에 저장됨
-        fileService.upload(files, code + "/" + id, assignmentId, user); // 지정된 buket에 /code/id라는 디렉터리로 files를 업로드
+        fileService.upload(files, "submission", assignmentId, user); // 지정된 buket에 /submission라는 디렉터리로 files를 업로드
         List<File> fileList = fileService.findAllByAssignmentId(assignmentId);
 
         return ApiResponse.onSuccess(SuccessCode.FILE_UPLOAD_SUCCESS, FileConverter.fileListResDto(fileList));
@@ -90,6 +90,6 @@ public class FileController {
     ) throws IOException {
         String filePath = fileUrl.substring(52);
 
-        return fileService.download(filePath); // 리턴 url == 다운로드 링크
+        return amazonS3Manager.download(filePath); // 리턴 url == 다운로드 링크
     }
 }

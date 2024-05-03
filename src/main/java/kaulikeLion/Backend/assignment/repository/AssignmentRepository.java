@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
-    // update board_table set board_hits=board_hits+1 where id=?
     @Modifying
     @Query(value = "update Assignment b set b.assignmentHits=b.assignmentHits+1 where b.id=:id")
     void updateHits(@Param("id") Long id);

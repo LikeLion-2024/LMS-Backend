@@ -9,36 +9,36 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class SubmissionResponseDto {
-    @Schema(description = "SimpleSubmissionDto")
+public class CommentResponseDto {
+    @Schema(description = "SimpleCommentDto")
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SimpleSubmissionDto{
+    public static class SimpleCommentDto{
         @Schema(description = "글 id")
         private Long id;
 
         @Schema(description = "글 작성자")
-        private String submissionWriter;
+        private String commentWriter;
 
         @Schema(description = "글 내용")
-        private String submissionContents;
+        private String commentContents;
 
         @Schema(description = "글 생성 시각")
-        private LocalDateTime submissionCreatedAt;
+        private LocalDateTime commentCreatedAt;
 
     }
 
-    @Schema(description = "SubmissionListResDto")
+    @Schema(description = "CommentListResDto")
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class SubmissionListResDto {
+    public static class CommentListResDto {
 
         @Schema(description = "글 리스트")
-        private List<SimpleSubmissionDto> submissionList;
+        private List<SimpleCommentDto> commentList;
 
     }
 }

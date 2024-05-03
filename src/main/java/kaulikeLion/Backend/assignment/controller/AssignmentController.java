@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kaulikeLion.Backend.assignment.converter.AssignmentConverter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
-import kaulikeLion.Backend.assignment.domain.Submission;
+import kaulikeLion.Backend.assignment.domain.Comment;
 import kaulikeLion.Backend.global.api_payload.SuccessCode;
 import kaulikeLion.Backend.assignment.service.AssignmentService;
-import kaulikeLion.Backend.assignment.service.SubmissionService;
+import kaulikeLion.Backend.assignment.service.CommentService;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
 import kaulikeLion.Backend.oauth.domain.User;
 import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
@@ -30,7 +30,7 @@ public class AssignmentController {
 
     private final UserService userService;
     private final AssignmentService assignmentService;
-    private final SubmissionService submissionService;
+    private final CommentService commentService;
 
     @Operation(summary = "과제 만들기 메서드", description = "과제를 만드는 메서드입니다.")
     @ApiResponses(value = {
@@ -67,7 +67,7 @@ public class AssignmentController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2002", description = "과제 상세 조회가 완료되었습니다.")
     })
     @GetMapping("/{id}")
-    public ApiResponse<DetailAssignmentDto> detail(
+    public ApiResponse<SimpleAssignmentDto> detail(
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
@@ -75,9 +75,9 @@ public class AssignmentController {
         // 해당 게시글의 조회수 +1
         Assignment assignment = assignmentService.increaseViewCount(assignmentService.findById(id));
         // 과제 제출 목록 가져오기
-        List<Submission> submissions = submissionService.findAllByAssignmentId(id);
+        List<Comment> comments = commentService.findAllByAssignmentId(id);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DETAIL_VIEW_SUCCESS, AssignmentConverter.detailAssignmentDto(assignment, submissions));
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DETAIL_VIEW_SUCCESS, AssignmentConverter.simpleAssignmentDto(assignment));
     }
 
     @Operation(summary = "과제 수정 메서드", description = "과제 정보를 수정하는 메서드입니다.")
@@ -85,7 +85,7 @@ public class AssignmentController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2003", description = "글 수정이 완료되었습니다.")
     })
     @PostMapping("/update/{id}")
-    public ApiResponse<DetailAssignmentDto> update(
+    public ApiResponse<SimpleAssignmentDto> update(
             @PathVariable(name = "id") Long id,
             @RequestBody DetailAssignmentReqDto detailAssignmentReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -95,9 +95,9 @@ public class AssignmentController {
         // 비밀번호 틀리면 수정하려고 작성한 내용 초기화되고, 기존 내용 유지됨.
         Assignment assignment = assignmentService.updateAssignment(id, detailAssignmentReqDto, user);
         // 과제 제출 목록 가져오기
-        List<Submission> submissions = submissionService.findAllByAssignmentId(id);
+        List<Comment> comments = commentService.findAllByAssignmentId(id);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_UPDATED, AssignmentConverter.detailAssignmentDto(assignment, submissions));
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_UPDATED, AssignmentConverter.simpleAssignmentDto(assignment));
     }
 
     @Operation(summary = "과제 삭제 메서드", description = "과제를 삭제하는 메서드입니다.")
@@ -105,7 +105,7 @@ public class AssignmentController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2004", description = "과제 삭제가 완료되었습니다.")
     })
     @DeleteMapping("/delete/{id}")
-    public ApiResponse<Integer> delete(
+    public ApiResponse<String> delete(
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
@@ -113,6 +113,6 @@ public class AssignmentController {
         // writer(작성자 or 수정자)인 사람만 삭제 가능
         assignmentService.deleteAssignment(id, user);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DELETED, 1);
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DELETED, "is deleted");
     }
 }

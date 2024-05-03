@@ -1,30 +1,26 @@
 package kaulikeLion.Backend.assignment.domain;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto;
 import kaulikeLion.Backend.global.entity.BaseEntity;
 import kaulikeLion.Backend.oauth.domain.User;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "submission")
-public class Submission extends BaseEntity { // 과제 제출
+@Table(name = "comment")
+public class Comment extends BaseEntity { // 과제 제출
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 20, nullable = false)
-    private String submissionWriter;
+    private String commentWriter;
 
     @Column
-    private String submissionContents;
+    private String commentContents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
