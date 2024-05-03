@@ -38,7 +38,6 @@ public class CommentController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         User user = userService.findUserByUserName(customUserDetails.getUsername());
-        // writer가 username으로 들어감
         Comment comment = commentService.createComment(commentDto, user);
 
         return ApiResponse.onSuccess(SuccessCode.COMMENT_CREATED, comment.getId());
