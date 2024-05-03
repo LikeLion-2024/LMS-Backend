@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.file.domain;
+package kaulikeLion.Backend.submission.domain;
 
 import jakarta.persistence.*;
 import kaulikeLion.Backend.assignment.domain.Assignment;
@@ -12,8 +12,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "file")
-public class File extends BaseEntity {
+@Table(name = "submission")
+public class Submission extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +22,7 @@ public class File extends BaseEntity {
     private String submitter;
 
     @Column
-    private String fileUrl;
+    private String submissionUrl;
 
     @Column
     private Integer isDeleted;

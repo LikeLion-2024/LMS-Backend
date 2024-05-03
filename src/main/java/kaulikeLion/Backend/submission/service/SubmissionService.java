@@ -1,13 +1,13 @@
-package kaulikeLion.Backend.file.service;
+package kaulikeLion.Backend.submission.service;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import kaulikeLion.Backend.assignment.domain.Assignment;
 import kaulikeLion.Backend.assignment.repository.AssignmentRepository;
-import kaulikeLion.Backend.file.converter.FileConverter;
-import kaulikeLion.Backend.file.domain.File;
-import kaulikeLion.Backend.file.repository.FileRepository;
+import kaulikeLion.Backend.submission.converter.SubmissionConverter;
+import kaulikeLion.Backend.submission.domain.Submission;
+import kaulikeLion.Backend.submission.repository.SubmissionRepository;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
 import kaulikeLion.Backend.global.s3.AmazonS3Manager;
@@ -30,21 +30,21 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
+public class SubmissionService { // S3 연동 - 업로드, 삭제, 다운로드
 
     private final AmazonS3 amazonS3;
-    private final FileRepository fileRepository;
+    private final SubmissionRepository submissionRepository;
     private final AssignmentRepository assignmentRepository;
     private final AmazonS3Manager amazonS3Manager;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public List<File> findAllByAssignmentId(Long id){
+    public List<Submission> findAllByAssignmentId(Long id){
         Assignment assignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> GeneralException.of(ErrorCode.ASSIGNMENT_NOT_FOUND));
 
-        return fileRepository.findAllByAssignmentOrderByIdAsc(assignment);
+        return submissionRepository.findAllByAssignmentOrderByIdAsc(assignment);
     }
 
     public List<String> upload(MultipartFile[] multipleFile, String dirName, Long assignmentId, User user) throws IOException { // 객체 업로드
@@ -57,7 +57,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
             // 파일의 확장자 추출
             String contentType = mf.getContentType();
             if (ObjectUtils.isEmpty(contentType)) { // 확장자명이 존재하지 않을 경우 취소 처리
-                throw GeneralException.of(ErrorCode.INVALID_FILE_CONTENT_TYPE);
+                throw GeneralException.of(ErrorCode.INVALID_SUBMISSION_CONTENT_TYPE);
             }
 
             // 파일 리스트 하나씩 업로드
@@ -72,7 +72,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
             String uploadFileUrl = amazonS3Manager.putS3(uploadFile, fileName);
 
             // db에 file 저장
-            fileRepository.save(FileConverter.saveFile(uploadFileUrl, assignment, user));
+            submissionRepository.save(SubmissionConverter.saveSubmission(uploadFileUrl, assignment, user));
 
             listUrl.add(uploadFileUrl);
         }
@@ -85,7 +85,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
             String fileUrl = "https://liklion-lms.s3.ap-northeast-2.amazonaws.com/" + filePath;
             log.info("fileUrl: " + fileUrl);
             // URL로 파일 찾음
-            File file = fileRepository.findByFileUrl(fileUrl);
+            Submission file = submissionRepository.findBySubmissionUrl(fileUrl);
 
             if(file != null) { // db에 파일이 존재하고
                 // 작성자와 삭제하려는 자가 동일인이어야 삭제 가능
@@ -94,7 +94,7 @@ public class FileService { // S3 연동 - 업로드, 삭제, 다운로드
                     amazonS3.deleteObject(new DeleteObjectRequest(bucket, filePath));
                     // isDeleted = 1로 변경. 동시에 삭제 시각 updated_at에 찍힘
                     file.setIsDeleted(1);
-                    fileRepository.save(file);
+                    submissionRepository.save(file);
                 } else throw new GeneralException(ErrorCode.BAD_REQUEST);
             } else throw new FileNotFoundException("File not found with URL: " + fileUrl);
 

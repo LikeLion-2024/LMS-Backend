@@ -25,12 +25,12 @@ public enum ErrorCode implements BaseCode {
     ASSIGNMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ASSIGNMENT_4041", "존재하지 않는 과제입니다."),
     ASSIGNMENT_DELETE_ERROR(HttpStatus.FORBIDDEN, "ASSIGNMENT_4042", "댓글이 있어 과제를 삭제할 수 없습니다."),
 
-    // Submission
+    // Comment
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT_4041", "존재하지 않는 댓글입니다."),
 
-    // File
-    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "FILE_4041", "존재하지 않는 파일입니다."),
-    INVALID_FILE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "FILE_4001", "파일에 확장자명이 없습니다."),
+    // Submission
+    SUBMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "SUBMISSION_4041", "존재하지 않는 파일입니다."),
+    INVALID_SUBMISSION_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "SUBMISSION_4001", "파일에 확장자명이 없습니다."),
 
     ;
 

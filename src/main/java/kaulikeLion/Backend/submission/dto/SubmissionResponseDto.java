@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.file.dto;
+package kaulikeLion.Backend.submission.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -8,13 +8,13 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class FileResponseDto {
-    @Schema(description = "SimpleFileDto")
+public class SubmissionResponseDto {
+    @Schema(description = "SimpleSubmissionDto")
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SimpleFileDto {
+    public static class SimpleSubmissionDto {
         @Schema(description = "파일 id")
         private Long id;
 
@@ -25,17 +25,17 @@ public class FileResponseDto {
         private Integer isDeleted;
 
         @Schema(description = "파일 url")
-        private String fileUrl;
+        private String submissionUrl;
     }
 
-    @Schema(description = "FileListResDto")
+    @Schema(description = "SubmissionListResDto")
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class FileListResDto {
+    public static class SubmissionListResDto {
 
         @Schema(description = "파일 리스트")
-        private List<FileResponseDto.SimpleFileDto> fileList;
+        private List<SubmissionResponseDto.SimpleSubmissionDto> submissionList;
     }
 }
