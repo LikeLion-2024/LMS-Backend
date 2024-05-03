@@ -5,7 +5,6 @@ import kaulikeLion.Backend.submission.domain.Submission;
 import kaulikeLion.Backend.submission.dto.SubmissionResponseDto;
 import kaulikeLion.Backend.oauth.domain.User;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @NoArgsConstructor
