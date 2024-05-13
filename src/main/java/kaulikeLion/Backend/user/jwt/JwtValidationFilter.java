@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.jwt;
+package kaulikeLion.Backend.user.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;

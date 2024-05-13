@@ -12,7 +12,7 @@ import kaulikeLion.Backend.assignment.repository.ViewCountRepository;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
 import kaulikeLion.Backend.global.s3.AmazonS3Manager;
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

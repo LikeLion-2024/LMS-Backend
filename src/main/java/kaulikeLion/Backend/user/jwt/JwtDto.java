@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.jwt;
+package kaulikeLion.Backend.user.jwt;
 
 import lombok.Builder;
 import lombok.Getter;

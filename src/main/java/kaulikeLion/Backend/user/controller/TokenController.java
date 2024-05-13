@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.controller;
+package kaulikeLion.Backend.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

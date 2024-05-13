@@ -1,6 +1,6 @@
-package kaulikeLion.Backend.oauth.repository;
+package kaulikeLion.Backend.user.repository;
 
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

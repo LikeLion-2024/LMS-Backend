@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.domain;
+package kaulikeLion.Backend.user.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,7 +16,11 @@ public class User{
     // DB 제약사항 추가
     @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false, unique = true)
     private String password;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String groupname; // 속한 그룹 이름

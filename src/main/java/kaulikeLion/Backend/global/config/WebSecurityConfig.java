@@ -1,9 +1,9 @@
 package kaulikeLion.Backend.global.config;
 
-import kaulikeLion.Backend.oauth.OAuth2SuccessHandler;
-import kaulikeLion.Backend.oauth.OAuth2UserServiceImpl;
-import kaulikeLion.Backend.oauth.jwt.AuthCreationFilter;
-import kaulikeLion.Backend.oauth.jwt.JwtValidationFilter;
+import kaulikeLion.Backend.user.OAuth2SuccessHandler;
+import kaulikeLion.Backend.user.OAuth2UserServiceImpl;
+import kaulikeLion.Backend.user.jwt.AuthCreationFilter;
+import kaulikeLion.Backend.user.jwt.JwtValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,11 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Configuration

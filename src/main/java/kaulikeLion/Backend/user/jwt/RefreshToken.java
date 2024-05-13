@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.jwt;
+package kaulikeLion.Backend.user.jwt;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

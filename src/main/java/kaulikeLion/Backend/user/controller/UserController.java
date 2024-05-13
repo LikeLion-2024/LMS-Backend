@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.controller;
+package kaulikeLion.Backend.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
 import kaulikeLion.Backend.global.api_payload.SuccessCode;
-import kaulikeLion.Backend.oauth.jwt.JwtDto;
-import kaulikeLion.Backend.oauth.service.UserService;
+import kaulikeLion.Backend.user.jwt.JwtDto;
+import kaulikeLion.Backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.service;
+package kaulikeLion.Backend.user.service;
 
 
 import io.jsonwebtoken.Claims;
@@ -6,15 +6,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import kaulikeLion.Backend.global.api_payload.ErrorCode;
 import kaulikeLion.Backend.global.exception.GeneralException;
-import kaulikeLion.Backend.oauth.domain.User;
-import kaulikeLion.Backend.oauth.dto.MypageRequestDto;
-import kaulikeLion.Backend.oauth.jwt.JwtDto;
-import kaulikeLion.Backend.oauth.jwt.JwtTokenUtils;
-import kaulikeLion.Backend.oauth.jwt.RefreshToken;
+import kaulikeLion.Backend.user.domain.User;
+import kaulikeLion.Backend.user.dto.MypageRequestDto;
+import kaulikeLion.Backend.user.jwt.JwtDto;
+import kaulikeLion.Backend.user.jwt.JwtTokenUtils;
+import kaulikeLion.Backend.user.jwt.RefreshToken;
 //import kaulikeLion.Backend.oauth.repository.RefreshTokenRedisRepository;
-import kaulikeLion.Backend.oauth.repository.RefreshTokenRepository;
-import kaulikeLion.Backend.oauth.repository.UserRepository;
-import kaulikeLion.Backend.oauth.utils.IpUtil;
+import kaulikeLion.Backend.user.repository.RefreshTokenRepository;
+import kaulikeLion.Backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

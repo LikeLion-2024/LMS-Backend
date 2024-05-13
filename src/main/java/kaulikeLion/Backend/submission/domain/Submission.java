@@ -3,7 +3,7 @@ package kaulikeLion.Backend.submission.domain;
 import jakarta.persistence.*;
 import kaulikeLion.Backend.assignment.domain.Assignment;
 import kaulikeLion.Backend.global.entity.BaseEntity;
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import lombok.*;
 
 @Entity

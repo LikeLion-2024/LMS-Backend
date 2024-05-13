@@ -1,15 +1,15 @@
-package kaulikeLion.Backend.oauth.controller;
+package kaulikeLion.Backend.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
-import kaulikeLion.Backend.oauth.converter.MypageConverter;
-import kaulikeLion.Backend.oauth.domain.User;
-import kaulikeLion.Backend.oauth.dto.MypageRequestDto;
-import kaulikeLion.Backend.oauth.dto.MypageResponseDto.MyInfoDto;
-import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
-import kaulikeLion.Backend.oauth.service.UserService;
+import kaulikeLion.Backend.user.converter.MypageConverter;
+import kaulikeLion.Backend.user.domain.User;
+import kaulikeLion.Backend.user.dto.MypageRequestDto;
+import kaulikeLion.Backend.user.dto.MypageResponseDto.MyInfoDto;
+import kaulikeLion.Backend.user.jwt.CustomUserDetails;
+import kaulikeLion.Backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

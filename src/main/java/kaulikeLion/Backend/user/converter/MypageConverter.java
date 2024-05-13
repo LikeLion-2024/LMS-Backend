@@ -1,7 +1,7 @@
-package kaulikeLion.Backend.oauth.converter;
+package kaulikeLion.Backend.user.converter;
 
-import kaulikeLion.Backend.oauth.domain.User;
-import kaulikeLion.Backend.oauth.dto.MypageResponseDto;
+import kaulikeLion.Backend.user.domain.User;
+import kaulikeLion.Backend.user.dto.MypageResponseDto;
 
 public class MypageConverter {
     public static MypageResponseDto.MyInfoDto myInfoDto(User user) {

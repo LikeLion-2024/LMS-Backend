@@ -2,7 +2,7 @@ package kaulikeLion.Backend.assignment.domain;
 
 import jakarta.persistence.*;
 import kaulikeLion.Backend.global.entity.BaseEntity;
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import lombok.*;
 
 @Entity
@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comment")
-public class Comment extends BaseEntity { // 과제 제출
+public class Comment extends BaseEntity { // 댓글
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

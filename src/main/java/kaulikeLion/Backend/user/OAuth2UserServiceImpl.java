@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth;
+package kaulikeLion.Backend.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

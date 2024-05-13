@@ -3,7 +3,7 @@ package kaulikeLion.Backend.assignment.converter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
 import kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
 import kaulikeLion.Backend.assignment.dto.AssignmentResponseDto.*;
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import java.util.List;

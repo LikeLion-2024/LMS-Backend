@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.utils;
+package kaulikeLion.Backend.user.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.StringUtils;

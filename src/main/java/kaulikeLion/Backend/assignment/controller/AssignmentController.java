@@ -10,9 +10,9 @@ import kaulikeLion.Backend.global.api_payload.SuccessCode;
 import kaulikeLion.Backend.assignment.service.AssignmentService;
 import kaulikeLion.Backend.assignment.service.CommentService;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
-import kaulikeLion.Backend.oauth.domain.User;
-import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
-import kaulikeLion.Backend.oauth.service.UserService;
+import kaulikeLion.Backend.user.domain.User;
+import kaulikeLion.Backend.user.jwt.CustomUserDetails;
+import kaulikeLion.Backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -34,7 +34,6 @@ public class AssignmentController {
 
     private final UserService userService;
     private final AssignmentService assignmentService;
-    private final CommentService commentService;
 
     @Operation(summary = "과제 만들기 메서드", description = "과제를 만드는 메서드입니다.")
     @ApiResponses(value = {
@@ -79,8 +78,6 @@ public class AssignmentController {
         User user = userService.findUserByUserName(customUserDetails.getUsername());
         // 해당 게시글의 조회수 +1
         Assignment assignment = assignmentService.increaseViewCount(assignmentService.findById(id));
-        // 과제 제출 목록 가져오기
-        List<Comment> comments = commentService.findAllByAssignmentId(id);
 
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DETAIL_VIEW_SUCCESS, AssignmentConverter.simpleAssignmentDto(assignment));
     }
@@ -100,7 +97,6 @@ public class AssignmentController {
         // 비밀번호 틀리면 수정하려고 작성한 내용 초기화되고, 기존 내용 유지됨.
         Assignment assignment = assignmentService.updateAssignment(id, detailAssignmentReqDto, user);
         // 과제 제출 목록 가져오기
-        List<Comment> comments = commentService.findAllByAssignmentId(id);
 
         return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_UPDATED, AssignmentConverter.simpleAssignmentDto(assignment));
     }

@@ -1,6 +1,6 @@
-package kaulikeLion.Backend.oauth.repository;
+package kaulikeLion.Backend.user.repository;
 
-import kaulikeLion.Backend.oauth.jwt.RefreshToken;
+import kaulikeLion.Backend.user.jwt.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

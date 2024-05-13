@@ -3,7 +3,7 @@ package kaulikeLion.Backend.submission.converter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
 import kaulikeLion.Backend.submission.domain.Submission;
 import kaulikeLion.Backend.submission.dto.SubmissionResponseDto;
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import lombok.NoArgsConstructor;
 import java.util.List;
 

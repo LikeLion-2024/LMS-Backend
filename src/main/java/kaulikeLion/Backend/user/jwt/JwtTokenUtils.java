@@ -1,4 +1,4 @@
-package kaulikeLion.Backend.oauth.jwt;
+package kaulikeLion.Backend.user.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;

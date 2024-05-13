@@ -1,6 +1,6 @@
-package kaulikeLion.Backend.oauth.jwt;
+package kaulikeLion.Backend.user.jwt;
 
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

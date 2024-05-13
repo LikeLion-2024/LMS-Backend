@@ -1,16 +1,16 @@
-package kaulikeLion.Backend.oauth;
+package kaulikeLion.Backend.user;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
-import kaulikeLion.Backend.oauth.jwt.JwtDto;
-import kaulikeLion.Backend.oauth.jwt.JwtTokenUtils;
-import kaulikeLion.Backend.oauth.jwt.RefreshToken;
+import kaulikeLion.Backend.user.jwt.CustomUserDetails;
+import kaulikeLion.Backend.user.jwt.JwtDto;
+import kaulikeLion.Backend.user.jwt.JwtTokenUtils;
+import kaulikeLion.Backend.user.jwt.RefreshToken;
 //import kaulikeLion.Backend.oauth.repository.RefreshTokenRedisRepository;
-import kaulikeLion.Backend.oauth.repository.RefreshTokenRepository;
-import kaulikeLion.Backend.oauth.utils.IpUtil;
+import kaulikeLion.Backend.user.repository.RefreshTokenRepository;
+import kaulikeLion.Backend.user.utils.IpUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
