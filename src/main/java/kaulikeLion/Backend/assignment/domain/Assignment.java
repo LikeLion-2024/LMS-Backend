@@ -1,7 +1,7 @@
 package kaulikeLion.Backend.assignment.domain;
 
 import kaulikeLion.Backend.global.entity.BaseEntity;
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,14 +40,14 @@ public class Assignment extends BaseEntity {
     private LocalDateTime dueDateTime;
 
     @Column
-    private int photoAttached;
+    private String assignmentImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Submission> submissionList = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
 
     public void updateHits(Long assignmentHits) {
         this.assignmentHits = assignmentHits;

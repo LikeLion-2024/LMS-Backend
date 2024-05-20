@@ -5,18 +5,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kaulikeLion.Backend.assignment.converter.AssignmentConverter;
 import kaulikeLion.Backend.assignment.domain.Assignment;
-import kaulikeLion.Backend.assignment.domain.Submission;
+import kaulikeLion.Backend.assignment.domain.Comment;
 import kaulikeLion.Backend.global.api_payload.SuccessCode;
 import kaulikeLion.Backend.assignment.service.AssignmentService;
-import kaulikeLion.Backend.assignment.service.SubmissionService;
+import kaulikeLion.Backend.assignment.service.CommentService;
 import kaulikeLion.Backend.global.api_payload.ApiResponse;
-import kaulikeLion.Backend.oauth.domain.User;
-import kaulikeLion.Backend.oauth.jwt.CustomUserDetails;
-import kaulikeLion.Backend.oauth.service.UserService;
+import kaulikeLion.Backend.user.domain.User;
+import kaulikeLion.Backend.user.jwt.CustomUserDetails;
+import kaulikeLion.Backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 import static kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
@@ -30,22 +34,22 @@ public class AssignmentController {
 
     private final UserService userService;
     private final AssignmentService assignmentService;
-    private final SubmissionService submissionService;
 
     @Operation(summary = "과제 만들기 메서드", description = "과제를 만드는 메서드입니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2011", description = "과제 생성이 완료되었습니다.")
     })
-    @PostMapping("/create")
-    public ApiResponse<SimpleAssignmentDto> create(
-            @RequestBody AssignmentReqDto assignmentReqDto,
+    @PostMapping(value ="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<Long> create(
+            @RequestPart(value = "board", required = false) MultipartFile file,
+            @RequestPart("data") AssignmentReqDto assignmentReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ){
+    ) throws IOException {
         User user = userService.findUserByUserName(customUserDetails.getUsername());
-        // writer가 username으로 들어감
-        Assignment assignment = assignmentService.createAssignment(assignmentReqDto, user);
+        String dirName = "assignment/";
+        Assignment assignment = assignmentService.createAssignment(assignmentReqDto, dirName, file, user);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_CREATED, AssignmentConverter.simpleAssignmentDto(assignment));
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_CREATED, assignment.getId());
     }
 
     @Operation(summary = "과제 목록 정보 조회 메서드", description = "과제 목록을 조회하는 메서드입니다.")
@@ -67,17 +71,15 @@ public class AssignmentController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2002", description = "과제 상세 조회가 완료되었습니다.")
     })
     @GetMapping("/{id}")
-    public ApiResponse<DetailAssignmentDto> detail(
+    public ApiResponse<SimpleAssignmentDto> detail(
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         User user = userService.findUserByUserName(customUserDetails.getUsername());
         // 해당 게시글의 조회수 +1
         Assignment assignment = assignmentService.increaseViewCount(assignmentService.findById(id));
-        // 과제 제출 목록 가져오기
-        List<Submission> submissions = submissionService.findAllByAssignmentId(id);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DETAIL_VIEW_SUCCESS, AssignmentConverter.detailAssignmentDto(assignment, submissions));
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DETAIL_VIEW_SUCCESS, AssignmentConverter.simpleAssignmentDto(assignment));
     }
 
     @Operation(summary = "과제 수정 메서드", description = "과제 정보를 수정하는 메서드입니다.")
@@ -85,7 +87,7 @@ public class AssignmentController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2003", description = "글 수정이 완료되었습니다.")
     })
     @PostMapping("/update/{id}")
-    public ApiResponse<DetailAssignmentDto> update(
+    public ApiResponse<SimpleAssignmentDto> update(
             @PathVariable(name = "id") Long id,
             @RequestBody DetailAssignmentReqDto detailAssignmentReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -95,9 +97,8 @@ public class AssignmentController {
         // 비밀번호 틀리면 수정하려고 작성한 내용 초기화되고, 기존 내용 유지됨.
         Assignment assignment = assignmentService.updateAssignment(id, detailAssignmentReqDto, user);
         // 과제 제출 목록 가져오기
-        List<Submission> submissions = submissionService.findAllByAssignmentId(id);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_UPDATED, AssignmentConverter.detailAssignmentDto(assignment, submissions));
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_UPDATED, AssignmentConverter.simpleAssignmentDto(assignment));
     }
 
     @Operation(summary = "과제 삭제 메서드", description = "과제를 삭제하는 메서드입니다.")
@@ -105,7 +106,7 @@ public class AssignmentController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ASSIGNMENT_2004", description = "과제 삭제가 완료되었습니다.")
     })
     @DeleteMapping("/delete/{id}")
-    public ApiResponse<Integer> delete(
+    public ApiResponse<String> delete(
             @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
@@ -113,6 +114,6 @@ public class AssignmentController {
         // writer(작성자 or 수정자)인 사람만 삭제 가능
         assignmentService.deleteAssignment(id, user);
 
-        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DELETED, 1);
+        return ApiResponse.onSuccess(SuccessCode.ASSIGNMENT_DELETED, "is deleted");
     }
 }

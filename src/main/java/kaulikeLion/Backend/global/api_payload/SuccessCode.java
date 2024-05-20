@@ -28,15 +28,15 @@ public enum SuccessCode implements BaseCode {
     ASSIGNMENT_UPDATED(HttpStatus.OK, "ASSIGNMENT_2003", "글 수정이 완료되었습니다."),
     ASSIGNMENT_DELETED(HttpStatus.OK, "ASSIGNMENT_2004", "과제 삭제가 완료되었습니다."),
 
-    // Submission
-    SUBMISSION_CREATED(HttpStatus.CREATED, "SUBMISSION_2011", "글 생성이 완료되었습니다."),
-    SUBMISSION_DELETED(HttpStatus.OK, "SUBMISSION_2001", "글 삭제가 완료되었습니다."),
+    // Comment
+    COMMENT_CREATED(HttpStatus.CREATED, "SUBMISSION_2011", "글 생성이 완료되었습니다."),
+    COMMENT_DELETED(HttpStatus.OK, "SUBMISSION_2001", "글 삭제가 완료되었습니다."),
 
-    // File
-    FILE_UPLOAD_SUCCESS(HttpStatus.OK, "FILE_2001", "파일 업로드가 완료되었습니다."),
-    FILE_LIST_VIEW_SUCCESS(HttpStatus.OK, "FILE_2002", "파일 리스트 조회가 완료되었습니다."),
-    FILE_DELETE_SUCCESS(HttpStatus.OK, "FILE_2003", "파일 삭제가 완료되었습니다."),
-    //FILE_DOWNLOAD_SUCCESS(HttpStatus.OK, "FILE_2004", "파일 다운로드가 완료되었습니다."),
+    // Submission
+    SUBMISSION_UPLOAD_SUCCESS(HttpStatus.OK, "SUBMISSION_2001", "파일 업로드가 완료되었습니다."),
+    SUBMISSION_LIST_VIEW_SUCCESS(HttpStatus.OK, "SUBMISSION_2002", "파일 리스트 조회가 완료되었습니다."),
+    SUBMISSION_DELETE_SUCCESS(HttpStatus.OK, "SUBMISSION_2003", "파일 삭제가 완료되었습니다."),
+    SUBMISSION_DOWNLOAD_SUCCESS(HttpStatus.OK, "SUBMISSION_2004", "파일 다운로드가 완료되었습니다."),
 
     ;
 

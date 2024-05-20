@@ -1,11 +1,9 @@
 package kaulikeLion.Backend.assignment.converter;
 
 import kaulikeLion.Backend.assignment.domain.Assignment;
-import kaulikeLion.Backend.assignment.domain.Submission;
 import kaulikeLion.Backend.assignment.dto.AssignmentRequestDto.*;
 import kaulikeLion.Backend.assignment.dto.AssignmentResponseDto.*;
-import kaulikeLion.Backend.assignment.dto.SubmissionResponseDto.*;
-import kaulikeLion.Backend.oauth.domain.User;
+import kaulikeLion.Backend.user.domain.User;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import java.util.List;
@@ -20,7 +18,6 @@ public class AssignmentConverter {
                 .assignmentContents(assignment.getAssignmentContents())
                 .dueDateTime(assignment.getDueDateTime())
                 .assignmentHits(0L)
-                .photoAttached(assignment.getPhotoAttached())
                 .build();
     }
 
@@ -33,7 +30,7 @@ public class AssignmentConverter {
                 .assignmentContents(assignment.getAssignmentContents())
                 .dueDateTime(assignment.getDueDateTime())
                 .assignmentHits(assignment.getAssignmentHits())
-                .photoAttached(assignment.getPhotoAttached())
+                .assignmentImage(assignment.getAssignmentImage())
                 .assignmentCreatedAt(assignment.getCreatedAt())
                 .build();
     }
@@ -50,24 +47,6 @@ public class AssignmentConverter {
                 .totalElements(assignments.getTotalElements())
                 .listSize(assignments.getSize())
                 .assignmentList(assignmentDtos)
-                .build();
-    }
-
-    public static DetailAssignmentDto detailAssignmentDto(Assignment assignment, List<Submission> submissions) {
-        List<SimpleSubmissionDto> submissionDtos
-                = submissions.stream().map(SubmissionConverter::simpleSubmissionDto).toList();
-
-        return DetailAssignmentDto.builder()
-                .id(assignment.getId())
-                .assignmentWriter(assignment.getAssignmentWriter())
-                .assignmentPass(assignment.getAssignmentPass())
-                .assignmentTitle(assignment.getAssignmentTitle())
-                .assignmentContents(assignment.getAssignmentContents())
-                .dueDateTime(assignment.getDueDateTime())
-                .assignmentHits(assignment.getAssignmentHits())
-                .photoAttached(assignment.getPhotoAttached())
-                .assignmentCreatedAt(assignment.getCreatedAt())
-                .submissionList(submissionDtos)
                 .build();
     }
 
