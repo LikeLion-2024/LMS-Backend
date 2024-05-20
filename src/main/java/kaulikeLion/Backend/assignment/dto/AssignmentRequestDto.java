@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
 public class AssignmentRequestDto {
 
     @Schema(description = "AssignmentReqDto")
